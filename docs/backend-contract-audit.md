@@ -1,9 +1,3 @@
-Kral elle tek tek yazmayacaksın. **Frontend repo içindeyken** aşağıdaki komutu komple yapıştır; dosyanın içini otomatik dolduracak. Bu içerik backend controller/DTO çıktılarından hazırlandı.  
-
-````bash
-mkdir -p docs
-
-cat > docs/backend-contract-audit.md <<'EOF'
 # Backend Contract Audit
 
 ## Scope
