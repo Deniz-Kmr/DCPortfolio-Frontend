@@ -1,0 +1,27 @@
+export const routePaths = {
+  public: {
+    home: '/',
+    about: '/about',
+    projects: '/projects',
+    projectDetail: '/projects/:slug',
+    technologies: '/technologies',
+    cv: '/cv',
+    experience: '/experience',
+    certificates: '/certificates',
+    contact: '/contact',
+  },
+  admin: {
+    login: '/admin/login',
+    dashboard: '/admin/dashboard',
+    projects: '/admin/projects',
+    technologies: '/admin/technologies',
+    cv: '/admin/cv',
+    experiences: '/admin/experiences',
+    certificates: '/admin/certificates',
+    devlogs: '/admin/devlogs',
+    todos: '/admin/todos',
+    lessons: '/admin/lessons',
+    englishPlans: '/admin/english-plans',
+    learningRoadmaps: '/admin/learning-roadmaps',
+  },
+} as const;
