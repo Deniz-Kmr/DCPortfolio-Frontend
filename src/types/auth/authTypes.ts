@@ -1,8 +1,3 @@
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
 export interface AuthUser {
   id: number;
   fullName: string;
@@ -10,7 +5,20 @@ export interface AuthUser {
   role: string;
 }
 
-export interface LoginResponse {
+export interface AuthResponse {
   token: string;
+  expiresAt: string;
   user: AuthUser;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface CreateAdminRequest {
+  setupKey: string;
+  fullName: string;
+  email: string;
+  password: string;
 }
