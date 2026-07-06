@@ -1,42 +1,43 @@
-import { NavLink, Outlet } from 'react-router-dom';
-
-import { routePaths } from '../../app/router/routePaths';
+import { Outlet } from 'react-router-dom';
 
 const navItems = [
-  { label: 'Home', to: routePaths.public.home },
-  { label: 'About', to: routePaths.public.about },
-  { label: 'Projects', to: routePaths.public.projects },
-  { label: 'Skills', to: routePaths.public.technologies },
-  { label: 'CV', to: routePaths.public.cv },
-  { label: 'Contact', to: routePaths.public.contact },
+  { label: 'Hakkımda', href: '/#about' },
+  { label: 'Projeler', href: '/projects' },
+  { label: 'Tech Stack', href: '/#technologies' },
+  { label: 'Deneyimler', href: '/#experience' },
 ];
 
 export function PublicLayout() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50">
-      <header className="border-b border-white/10 bg-slate-950/90">
-        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <NavLink
-            to={routePaths.public.home}
-            className="text-sm font-semibold tracking-[0.25em] text-sky-300"
+    <div className="min-h-screen bg-[#EEF1F5] font-['Inter'] text-[#14171C]">
+      <header className="sticky top-0 z-40 border-b border-[#DDE2EA]/80 bg-[#EEF1F5]/85 backdrop-blur-xl">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6">
+          <a
+            href="/#hero"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#D1D7E0] bg-white font-['Manrope'] text-sm font-extrabold tracking-tight text-[#14171C] shadow-sm shadow-black/5 transition hover:-translate-y-0.5 hover:border-[#14171C]/30"
+            aria-label="Ana sayfaya dön"
           >
-            DCPORTFOLIO
-          </NavLink>
+            DÇ
+          </a>
 
-          <div className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
+          <div className="hidden items-center gap-1 rounded-full border border-[#D1D7E0] bg-white/85 p-1 shadow-sm shadow-black/5 md:flex">
             {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === routePaths.public.home}
-                className={({ isActive }) =>
-                  isActive ? 'text-white' : 'transition hover:text-white'
-                }
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-full px-4 py-2 font-['IBM_Plex_Mono'] text-xs font-medium text-[#4B5563] transition hover:bg-[#EEF1F5] hover:text-[#14171C]"
               >
                 {item.label}
-              </NavLink>
+              </a>
             ))}
           </div>
+
+          <a
+            href="/#contact"
+            className="inline-flex h-10 min-w-[88px] items-center justify-center rounded-xl border border-[#D1D7E0] bg-white px-4 font-['IBM_Plex_Mono'] text-xs font-semibold text-[#14171C] shadow-sm shadow-black/5 transition hover:-translate-y-0.5 hover:border-[#14171C]/30 hover:bg-[#F7F8FA]"
+          >
+            İletişim
+          </a>
         </nav>
       </header>
 
