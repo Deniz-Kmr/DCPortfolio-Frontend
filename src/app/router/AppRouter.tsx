@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+import { appConfig } from '../../config';
 import { AdminLayout } from '../../components/layout/AdminLayout';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { AdminCertificatesPage } from '../../pages/admin/AdminCertificatesPage';
@@ -14,6 +15,8 @@ import { AdminLoginPage } from '../../pages/admin/AdminLoginPage';
 import { AdminProjectsPage } from '../../pages/admin/AdminProjectsPage';
 import { AdminTechnologiesPage } from '../../pages/admin/AdminTechnologiesPage';
 import { AdminTodosPage } from '../../pages/admin/AdminTodosPage';
+import { AdminDisabledPage } from '../../pages/common/AdminDisabledPage';
+import { NotFoundPage } from '../../pages/common/NotFoundPage';
 import { AboutPage } from '../../pages/public/AboutPage';
 import { CertificatesPage } from '../../pages/public/CertificatesPage';
 import { ContactPage } from '../../pages/public/ContactPage';
@@ -23,6 +26,37 @@ import { HomePage } from '../../pages/public/HomePage';
 import { ProjectDetailPage } from '../../pages/public/ProjectDetailPage';
 import { ProjectsPage } from '../../pages/public/ProjectsPage';
 import { TechnologiesPage } from '../../pages/public/TechnologiesPage';
+
+const adminRoutes = appConfig.enableAdminUi
+  ? [
+      {
+        path: '/admin/login',
+        element: <AdminLoginPage />,
+      },
+      {
+        path: '/admin',
+        element: <AdminLayout />,
+        children: [
+          { path: 'dashboard', element: <AdminDashboardPage /> },
+          { path: 'projects', element: <AdminProjectsPage /> },
+          { path: 'technologies', element: <AdminTechnologiesPage /> },
+          { path: 'cv', element: <AdminCvPage /> },
+          { path: 'experiences', element: <AdminExperiencesPage /> },
+          { path: 'certificates', element: <AdminCertificatesPage /> },
+          { path: 'devlogs', element: <AdminDevLogsPage /> },
+          { path: 'todos', element: <AdminTodosPage /> },
+          { path: 'lessons', element: <AdminLessonsPage /> },
+          { path: 'english-plans', element: <AdminEnglishPlansPage /> },
+          { path: 'learning-roadmaps', element: <AdminLearningRoadmapsPage /> },
+        ],
+      },
+    ]
+  : [
+      {
+        path: '/admin/*',
+        element: <AdminDisabledPage />,
+      },
+    ];
 
 const router = createBrowserRouter([
   {
@@ -38,28 +72,13 @@ const router = createBrowserRouter([
       { path: 'experience', element: <ExperiencePage /> },
       { path: 'certificates', element: <CertificatesPage /> },
       { path: 'contact', element: <ContactPage /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
+  ...adminRoutes,
   {
-    path: '/admin/login',
-    element: <AdminLoginPage />,
-  },
-  {
-    path: '/admin',
-    element: <AdminLayout />,
-    children: [
-      { path: 'dashboard', element: <AdminDashboardPage /> },
-      { path: 'projects', element: <AdminProjectsPage /> },
-      { path: 'technologies', element: <AdminTechnologiesPage /> },
-      { path: 'cv', element: <AdminCvPage /> },
-      { path: 'experiences', element: <AdminExperiencesPage /> },
-      { path: 'certificates', element: <AdminCertificatesPage /> },
-      { path: 'devlogs', element: <AdminDevLogsPage /> },
-      { path: 'todos', element: <AdminTodosPage /> },
-      { path: 'lessons', element: <AdminLessonsPage /> },
-      { path: 'english-plans', element: <AdminEnglishPlansPage /> },
-      { path: 'learning-roadmaps', element: <AdminLearningRoadmapsPage /> },
-    ],
+    path: '*',
+    element: <NotFoundPage />,
   },
 ]);
 
