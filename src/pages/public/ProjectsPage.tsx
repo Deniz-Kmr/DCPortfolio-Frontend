@@ -1,16 +1,19 @@
 import { Link } from 'react-router-dom';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 
 import { EmptyState, ErrorState, LoadingState } from '../../components/common/data-state';
-import { EndpointBadge } from '../../components/common/developer';
 import { usePublicProjects } from '../../features/projects/hooks';
-import { apiRoutes } from '../../services/api';
 import { buildBackendFileUrl } from '../../utils/backendUrl';
 
+const FONT_DISPLAY = "font-['Manrope']";
+const FONT_MONO = "font-['IBM_Plex_Mono']";
+const FONT_BODY = "font-['Inter']";
+
 function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : 'Please try again later.';
+  return error instanceof Error ? error.message : 'Lütfen daha sonra tekrar deneyin.';
 }
 
-function resolveAssetUrl(url: string | null) {
+function resolveAssetUrl(url: string | null | undefined) {
   if (!url) {
     return null;
   }
@@ -22,131 +25,195 @@ function resolveAssetUrl(url: string | null) {
   return buildBackendFileUrl(url);
 }
 
+function MethodBadge({ method }: { method: 'GET' | 'POST' }) {
+  const isGet = method === 'GET';
+
+  return (
+    <span
+      className={`${FONT_MONO} inline-flex items-center justify-center rounded px-2 py-0.5 text-[11px] font-semibold ${
+        isGet ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#F59E0B]/15 text-[#B45309]'
+      }`}
+    >
+      {method}
+    </span>
+  );
+}
+
+function RouteHeader({
+  method,
+  path,
+  title,
+  description,
+}: {
+  method: 'GET' | 'POST';
+  path: string;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div className="max-w-3xl">
+      <div className="flex items-center gap-2.5">
+        <MethodBadge method={method} />
+        <span className={`${FONT_MONO} text-sm text-[#14171C]`}>{path}</span>
+        <span className="h-px flex-1 bg-[#C7CFDB]" />
+        <span className={`${FONT_MONO} text-[11px] font-medium text-[#64748B]`}>200 OK</span>
+      </div>
+
+      <h1 className={` mt-4 text-xl font-extrabold uppercase tracking-[0.12em] text-[#14171C] sm:text-2xl`}>
+        {title}
+      </h1>
+
+      {description ? (
+        <p className="mt-5 max-w-2xl text-base leading-8 text-[#4B5563] sm:text-lg">
+          {description}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 export function ProjectsPage() {
   const projectsQuery = usePublicProjects();
   const projects = projectsQuery.data ?? [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="space-y-10">
-        <section className="rounded-3xl border border-white/10 bg-white/[0.025] p-6 sm:p-8">
-          <EndpointBadge path={apiRoutes.public.projects} />
+    <div className={`${FONT_BODY} bg-[#EEF1F5]`}>
+      <section className="mx-auto max-w-6xl px-5 pb-10 pt-16 sm:px-6 sm:pb-14 sm:pt-20">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <RouteHeader
+            method="GET"
+            path="/projeler"
+            title="TÜM PROJELER"
+            description="Yayınladığım tüm projeleri, kullanılan teknolojileri ve detay sayfalarını buradan inceleyebilirsin."
+          />
 
-          <h1 className="mt-6 text-3xl font-semibold tracking-tight text-slate-50 sm:text-5xl">
-            Projects
-          </h1>
+          <a
+            href="/#hero"
+            className={`${FONT_MONO} inline-flex w-fit rounded-md border border-[#D1D7E0] bg-white px-4 py-2 text-xs font-medium text-[#14171C] shadow-sm shadow-black/5 transition hover:-translate-y-0.5 hover:border-[#14171C]/30 hover:bg-[#F7F8FA]`}
+          >
+            <span>Ana sayfa</span>
+            <ArrowRight size={14} strokeWidth={1.9} />
+          </a>
+        </div>
+      </section>
 
-          <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">
-            Public project data is rendered from the backend API contract. Each card reflects
-            published project records, linked technologies and safe external URLs.
-          </p>
-        </section>
-
+      <section className="mx-auto max-w-6xl px-5 pb-24 sm:px-6">
         {projectsQuery.isLoading ? (
-          <LoadingState title="Loading public projects..." />
+          <LoadingState title="Projeler yükleniyor..." />
         ) : projectsQuery.isError ? (
           <ErrorState
-            title="Projects could not be loaded."
+            title="Projeler yüklenemedi."
             message={getErrorMessage(projectsQuery.error)}
           />
         ) : projects.length === 0 ? (
           <EmptyState
-            title="No public projects yet."
-            message="The public projects endpoint is available, but no project is published yet."
+            title="Henüz yayınlanan proje yok."
+            message="Projeler yayınlandığında bu sayfada listelenecek."
           />
         ) : (
-          <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {projects.map((project) => {
+          <div className="grid gap-6">
+            {projects.map((project, index) => {
               const imageUrl = resolveAssetUrl(project.imageUrl);
 
               return (
                 <article
                   key={project.id}
-                  className="flex min-h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035] transition hover:border-sky-300/30 hover:bg-white/[0.055]"
+                  className="overflow-hidden rounded-xl border border-[#D1D7E0] bg-white shadow-sm shadow-black/5 transition hover:-translate-y-1 hover:border-[#14171C]/25"
                 >
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt={project.title}
-                      className="h-48 w-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="border-b border-white/10 bg-slate-950/70 p-5">
-                      <div className="rounded-2xl border border-sky-300/10 bg-sky-300/[0.04] p-4 font-mono text-xs text-slate-300">
-                        <p>project.slug = "{project.slug}"</p>
-                        <p className="mt-2">response.type = "PublicProjectListItem"</p>
-                      </div>
+                  <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
+                    <div className="bg-[#F7F8FA] p-4 lg:border-r lg:border-[#D1D7E0]">
+                      {imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt={project.title}
+                          className="aspect-video h-full w-full rounded-md bg-white object-contain p-3"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className={`${FONT_MONO} flex aspect-video items-center justify-center rounded-md border border-dashed border-[#C7CFDB] bg-white p-4 text-xs text-[#64748B]`}>
+                          /projects/{project.slug}
+                        </div>
+                      )}
                     </div>
-                  )}
 
-                  <div className="flex flex-1 flex-col p-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <h2 className="text-xl font-semibold text-slate-50">{project.title}</h2>
-
-                      {project.isFeatured ? (
-                        <span className="rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1 text-xs text-sky-100">
-                          Featured
+                    <div className="flex flex-col justify-center p-6 sm:p-8">
+                      <div className="flex items-center gap-2">
+                        <MethodBadge method="GET" />
+                        <span className={`${FONT_MONO} text-xs text-[#64748B]`}>
+                          /projeler/{project.slug}
                         </span>
-                      ) : null}
-                    </div>
-
-                    <p className="mt-3 line-clamp-4 text-sm leading-6 text-slate-400">
-                      {project.shortDescription}
-                    </p>
-
-                    {project.technologies.length > 0 ? (
-                      <div className="mt-5 flex flex-wrap gap-2">
-                        {project.technologies.map((technology) => (
-                          <span
-                            key={technology.id}
-                            className="rounded-full border border-white/10 bg-slate-950/40 px-3 py-1 text-xs text-slate-300"
-                          >
-                            {technology.name}
-                          </span>
-                        ))}
+                        <span className="h-px flex-1 bg-[#C7CFDB]" />
+                        <span className={`${FONT_MONO} text-[11px] font-medium text-[#64748B]`}>
+                          200 OK
+                        </span>
                       </div>
-                    ) : null}
 
-                    <div className="mt-auto flex flex-wrap gap-3 pt-6">
-                      {project.slug ? (
+                      <p className={`${FONT_MONO} mt-5 text-xs font-medium text-[#9CA3AF]`}>
+                        0{index + 1} / Project
+                      </p>
+
+                      <h2 className={`${FONT_DISPLAY} mt-3 text-3xl font-extrabold tracking-tight text-[#14171C]`}>
+                        {project.title}
+                      </h2>
+
+                      <p className="mt-4 text-sm leading-7 text-[#4B5563] sm:text-base">
+                        {project.shortDescription}
+                      </p>
+
+                      {project.technologies.length > 0 ? (
+                        <div className="mt-6 flex flex-wrap gap-2">
+                          {project.technologies.slice(0, 10).map((technology) => (
+                            <span
+                              key={technology.id}
+                              className={`${FONT_MONO} rounded-md border border-[#D1D7E0] bg-[#F7F8FA] px-3 py-1.5 text-xs font-medium text-[#374151]`}
+                            >
+                              {technology.name}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+
+                      <div className="mt-7 flex flex-wrap items-center gap-3 border-t border-[#D1D7E0] pt-5">
                         <Link
                           to={`/projects/${project.slug}`}
-                          className="text-sm font-semibold text-sky-200 hover:text-sky-100"
+                          className={`${FONT_MONO} inline-flex items-center justify-center gap-2 rounded-md border border-[#D1D7E0] bg-white px-5 py-2.5 text-sm font-semibold text-[#14171C] shadow-sm shadow-black/5 transition hover:-translate-y-0.5 hover:border-[#14171C]/30 hover:bg-[#F7F8FA]`}
                         >
-                          Details →
+                          <span>Detayları gör</span>
+                          <ArrowRight size={14} strokeWidth={1.9} />
                         </Link>
-                      ) : null}
 
-                      {project.githubUrl ? (
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-sm font-semibold text-slate-300 hover:text-slate-100"
-                        >
-                          GitHub ↗
-                        </a>
-                      ) : null}
+                        {project.githubUrl ? (
+                          <a
+                            href={project.githubUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={`${FONT_MONO} inline-flex items-center justify-center gap-2 rounded-md border border-[#D1D7E0] bg-white px-5 py-2.5 text-sm font-semibold text-[#14171C] shadow-sm shadow-black/5 transition hover:-translate-y-0.5 hover:border-[#14171C]/30 hover:bg-[#F7F8FA]`}
+                          >
+                            <span>GitHub</span>
+                            <ExternalLink size={14} strokeWidth={1.9} />
+                          </a>
+                        ) : null}
 
-                      {project.demoUrl ? (
-                        <a
-                          href={project.demoUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-sm font-semibold text-slate-300 hover:text-slate-100"
-                        >
-                          Demo ↗
-                        </a>
-                      ) : null}
+                        {project.demoUrl ? (
+                          <a
+                            href={project.demoUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={`${FONT_MONO} inline-flex items-center justify-center gap-2 rounded-md border border-[#16A34A]/25 bg-[#16A34A]/10 px-5 py-2.5 text-sm font-semibold text-[#16A34A] transition hover:-translate-y-0.5 hover:bg-[#16A34A]/15`}
+                          >
+                            <span>Demo</span>
+                            <ExternalLink size={14} strokeWidth={1.9} />
+                          </a>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
                 </article>
               );
             })}
-          </section>
+          </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
