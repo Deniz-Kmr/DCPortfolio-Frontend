@@ -1,0 +1,1 @@
+export { usePublicCv } from './usePublicCv';
