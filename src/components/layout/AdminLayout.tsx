@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 
 import { routePaths } from '../../app/router/routePaths';
+import { AdminEnvironmentBanner } from '../admin/AdminEnvironmentBanner';
 
 const adminItems = [
   { label: 'Dashboard', to: routePaths.admin.dashboard },
@@ -48,6 +49,7 @@ export function AdminLayout() {
       </aside>
 
       <main className="min-h-screen lg:pl-72">
+        <AdminEnvironmentBanner />
         <div className="p-6 lg:p-8">
           <Outlet />
         </div>
