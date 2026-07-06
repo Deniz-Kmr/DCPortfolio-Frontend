@@ -1,3 +1,5 @@
+import { FileText } from 'lucide-react';
+
 import { EmptyState, ErrorState, LoadingState } from '../../components/common/data-state';
 import { usePublicCertificates } from '../../features/certificates/hooks';
 import { usePublicCv } from '../../features/cv/hooks';
@@ -37,6 +39,32 @@ function formatDate(value: string | null) {
     year: 'numeric',
     month: 'short',
   }).format(date);
+}
+
+function GithubIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-[18px] w-[18px]"
+      fill="currentColor"
+    >
+      <path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.5v-1.76c-2.78.62-3.37-1.2-3.37-1.2-.45-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.56 2.35 1.11 2.92.85.09-.67.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05A9.3 9.3 0 0 1 12 7.1c.85 0 1.7.12 2.5.34 1.9-1.32 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.92-2.34 4.78-4.57 5.04.36.32.68.94.68 1.9v2.67c0 .28.18.6.69.5A10.07 10.07 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z" />
+    </svg>
+  );
+}
+
+function LinkedinIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-[18px] w-[18px]"
+      fill="currentColor"
+    >
+      <path d="M6.94 8.98H3.75V20h3.19V8.98ZM5.34 4C4.31 4 3.5 4.8 3.5 5.8c0 .99.8 1.8 1.8 1.8h.03c1.04 0 1.84-.81 1.84-1.8C7.15 4.8 6.37 4 5.34 4ZM20.5 13.68c0-3.05-1.63-4.47-3.8-4.47-1.75 0-2.54.97-2.98 1.65V8.98h-3.19c.04 1.03 0 11.02 0 11.02h3.19v-6.15c0-.33.02-.66.12-.9.26-.66.86-1.35 1.86-1.35 1.31 0 1.84 1 1.84 2.47V20h3.19l-.03-6.32Z" />
+    </svg>
+  );
 }
 
 function SectionHeader({
@@ -85,7 +113,7 @@ export function HomePage() {
     0,
   );
 
-  const cvFileUrl = resolveAssetUrl(profile?.cvFileUrl);
+  const cvFileUrl = resolveAssetUrl(profile?.cvFileUrl) ?? buildBackendFileUrl('/files/cv/deniz-celik-cv.pdf');
   const contactItems = [
     profile?.email
       ? {
@@ -139,46 +167,49 @@ export function HomePage() {
                 'Güvenli API yapıları, yönetilebilir backend sistemleri ve gerçek veriye bağlı sade portfolio deneyimleri üzerine çalışıyorum.'}
             </p>
 
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="mt-9 flex flex-wrap items-center gap-3">
               <a
                 href="#projects"
-                className="rounded-full bg-zinc-100 px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-white"
+                className="inline-flex items-center rounded-full bg-zinc-50 px-5 py-3 text-sm font-bold text-zinc-950 shadow-sm transition hover:bg-white"
               >
                 Projeleri gör
               </a>
 
-              {profile?.githubUrl ? (
-                <a
-                  href={profile.githubUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full border border-white/10 px-5 py-3 text-sm font-semibold text-zinc-200 transition hover:border-white/20 hover:bg-white/[0.04]"
-                >
-                  GitHub
-                </a>
-              ) : null}
+              <div className="flex items-center gap-2">
+                {profile?.githubUrl ? (
+                  <a
+                    href={profile.githubUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="GitHub profilini aç"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white"
+                  >
+                    <GithubIcon />
+                  </a>
+                ) : null}
 
-              {profile?.linkedInUrl ? (
-                <a
-                  href={profile.linkedInUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full border border-white/10 px-5 py-3 text-sm font-semibold text-zinc-200 transition hover:border-white/20 hover:bg-white/[0.04]"
-                >
-                  LinkedIn
-                </a>
-              ) : null}
+                {profile?.linkedInUrl ? (
+                  <a
+                    href={profile.linkedInUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="LinkedIn profilini aç"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white"
+                  >
+                    <LinkedinIcon />
+                  </a>
+                ) : null}
 
-              {cvFileUrl ? (
                 <a
                   href={cvFileUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-full border border-white/10 px-5 py-3 text-sm font-semibold text-zinc-200 transition hover:border-white/20 hover:bg-white/[0.04]"
+                  aria-label="CV PDF dosyasını aç"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white"
                 >
-                  CV
+                  <FileText size={18} strokeWidth={1.8} />
                 </a>
-              ) : null}
+              </div>
             </div>
           </div>
 
@@ -560,8 +591,8 @@ export function HomePage() {
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <SectionHeader
               eyebrow="İletişim"
-              title="Gerçek iletişim bilgileri yayınlandığında burada görünür."
-              description="Email, GitHub, LinkedIn ve CV linkleri sadece CV/Profile datasında varsa render edilir."
+              title="İletişim bilgilerim."
+              description="Email, GitHub, LinkedIn ve CV bağlantıları gerçek portfolio verilerine göre gösterilir."
             />
 
             <div>
