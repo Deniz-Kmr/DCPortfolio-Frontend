@@ -6,8 +6,16 @@ import { z } from 'zod';
 
 import { routePaths } from '../../app/router/routePaths';
 import { AdminEnvironmentBanner } from '../../components/admin/AdminEnvironmentBanner';
+import {
+  AdminButton,
+  AdminField,
+  AdminPanel,
+  AdminStatusBadge,
+  AdminWindow,
+} from '../../components/admin/vintage';
+import { appConfig } from '../../config';
 import { useAdminLogin, useCurrentAdminUser } from '../../features/admin-auth';
-import { getAccessToken } from '../../services/auth';
+import { clearAccessToken, getAccessToken } from '../../services/auth';
 
 const loginSchema = z.object({
   email: z
@@ -38,89 +46,101 @@ export function AdminLoginPage() {
   });
 
   useEffect(() => {
-    if (hasToken && currentAdminUser.isSuccess) {
+    if (hasToken && currentAdminUser.isSuccess && currentAdminUser.data.role === 'Admin') {
       navigate(routePaths.admin.dashboard, { replace: true });
     }
-  }, [currentAdminUser.isSuccess, hasToken, navigate]);
+
+    if (hasToken && currentAdminUser.isError) {
+      clearAccessToken();
+    }
+  }, [currentAdminUser.data?.role, currentAdminUser.isError, currentAdminUser.isSuccess, hasToken, navigate]);
 
   async function onSubmit(values: LoginFormValues) {
-    await adminLogin.mutateAsync(values);
-    navigate(routePaths.admin.dashboard, { replace: true });
+    try {
+      await adminLogin.mutateAsync(values);
+      navigate(routePaths.admin.dashboard, { replace: true });
+    } catch {
+      // Hata mesajı mutation state üzerinden ekranda gösteriliyor.
+    }
   }
 
   return (
-    <section className="min-h-screen bg-slate-950 text-slate-50">
+    <section className="min-h-screen bg-[#7F9DB9] bg-[linear-gradient(135deg,#7F9DB9_0%,#C8D7EA_45%,#EEF1F5_100%)] text-[#1F2937]">
       <AdminEnvironmentBanner />
 
-      <div className="flex min-h-screen items-center justify-center px-6 py-12">
-        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/[0.03] p-8 shadow-2xl shadow-black/30">
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-sky-300">
-            Secure Admin
-          </p>
-
-          <h1 className="mt-4 text-3xl font-bold text-white">Admin Login</h1>
-
-          <p className="mt-4 text-sm leading-6 text-slate-300">
-            Local admin panel için backend kimlik doğrulaması kullanılır. Token güvenli şekilde
-            mevcut tokenStorage akışıyla saklanır.
-          </p>
-
-          {hasToken && currentAdminUser.isLoading ? (
-            <div className="mt-6 rounded-xl border border-sky-400/20 bg-sky-400/10 px-4 py-3 text-sm text-sky-100">
-              Mevcut oturum kontrol ediliyor...
+      <div className="flex min-h-screen items-center justify-center px-5 py-12">
+        <AdminWindow
+          title="DCPortfolio Local Admin"
+          subtitle="Windows control panel style login"
+          className="w-full max-w-[520px]"
+          actions={
+            <div className="flex flex-wrap items-center gap-2">
+              <AdminStatusBadge tone="online">local ui</AdminStatusBadge>
+              <AdminStatusBadge tone={appConfig.isProductionApiTarget ? 'warning' : 'neutral'}>
+                api: {appConfig.apiTarget}
+              </AdminStatusBadge>
             </div>
-          ) : null}
-
-          <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label htmlFor="email" className="text-sm font-medium text-slate-200">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                className="mt-2 w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300"
-                placeholder="admin@dcportfolio.local"
-                {...register('email')}
-              />
-              {errors.email ? (
-                <p className="mt-2 text-sm text-red-300">{errors.email.message}</p>
-              ) : null}
+          }
+        >
+          <AdminPanel>
+            <div className="mb-6 border border-[#9AA4B2] bg-[#E9EDF4] p-4 shadow-[inset_1px_1px_0_#ffffff]">
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#17406F]">
+                Secure workstation
+              </p>
+              <h1 className="mt-2 text-2xl font-black text-[#102A43]">Admin Login</h1>
+              <p className="mt-3 text-sm leading-6 text-[#334155]">
+                Local admin panel için backend kimlik doğrulaması kullanılır. Token mevcut
+                tokenStorage akışıyla saklanır ve ekranda gösterilmez.
+              </p>
             </div>
 
-            <div>
-              <label htmlFor="password" className="text-sm font-medium text-slate-200">
-                Şifre
-              </label>
-              <input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                className="mt-2 w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300"
-                placeholder="••••••••"
-                {...register('password')}
-              />
-              {errors.password ? (
-                <p className="mt-2 text-sm text-red-300">{errors.password.message}</p>
-              ) : null}
-            </div>
-
-            {adminLogin.isError ? (
-              <div className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-100">
-                {adminLogin.error.message}
+            {hasToken && currentAdminUser.isLoading ? (
+              <div className="mb-5 border border-[#17406F] bg-[#D7E9FF] px-3 py-2 text-sm font-semibold text-[#082F5F]">
+                Mevcut oturum kontrol ediliyor...
               </div>
             ) : null}
 
-            <button
-              type="submit"
-              disabled={adminLogin.isPending}
-              className="w-full rounded-xl border border-sky-300/30 bg-sky-400 px-4 py-3 text-sm font-bold text-slate-950 transition hover:bg-sky-300 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {adminLogin.isPending ? 'Giriş yapılıyor...' : 'Giriş yap'}
-            </button>
-          </form>
-        </div>
+            <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+              <AdminField label="Email" error={errors.email?.message}>
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  className="w-full border border-[#7C8794] bg-white px-3 py-2 text-sm text-[#111827] outline-none shadow-[inset_1px_1px_0_#D1D5DB] focus:border-[#17406F]"
+                  placeholder="admin@dcportfolio.local"
+                  {...register('email')}
+                />
+              </AdminField>
+
+              <AdminField label="Şifre" error={errors.password?.message}>
+                <input
+                  id="password"
+                  type="password"
+                  autoComplete="current-password"
+                  className="w-full border border-[#7C8794] bg-white px-3 py-2 text-sm text-[#111827] outline-none shadow-[inset_1px_1px_0_#D1D5DB] focus:border-[#17406F]"
+                  placeholder="••••••••"
+                  {...register('password')}
+                />
+              </AdminField>
+
+              {adminLogin.isError ? (
+                <div className="border border-red-700 bg-red-100 px-3 py-2 text-sm font-semibold text-red-900">
+                  {adminLogin.error.message}
+                </div>
+              ) : null}
+
+              <div className="flex flex-col gap-3 border-t border-[#B6C1D1] pt-5 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#64748B]">
+                  JWT + Admin role required
+                </p>
+
+                <AdminButton type="submit" variant="primary" disabled={adminLogin.isPending}>
+                  {adminLogin.isPending ? 'Giriş yapılıyor...' : 'Giriş yap'}
+                </AdminButton>
+              </div>
+            </form>
+          </AdminPanel>
+        </AdminWindow>
       </div>
     </section>
   );
