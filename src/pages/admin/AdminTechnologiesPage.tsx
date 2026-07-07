@@ -172,6 +172,14 @@ function technologyStatus(technology: AdminTechnologyListItem) {
   );
 }
 
+function getNextTechnologyDisplayOrder(items: AdminTechnologyListItem[]) {
+  if (items.length === 0) {
+    return 0;
+  }
+
+  return Math.max(...items.map((item) => item.displayOrder)) + 1;
+}
+
 export function AdminTechnologiesPage() {
   const [editingTechnologyId, setEditingTechnologyId] = useState<number | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -206,9 +214,16 @@ export function AdminTechnologiesPage() {
     });
   }, [technologiesQuery.data]);
 
+  const nextTechnologyDisplayOrder = useMemo(() => {
+    return getNextTechnologyDisplayOrder(technologiesQuery.data ?? []);
+  }, [technologiesQuery.data]);
+
   function openCreateForm() {
     setEditingTechnologyId(null);
-    reset(defaultTechnologyFormValues);
+    reset({
+      ...defaultTechnologyFormValues,
+      displayOrder: nextTechnologyDisplayOrder,
+    });
     setIsFormOpen(true);
   }
 
@@ -360,15 +375,21 @@ export function AdminTechnologiesPage() {
                       Display Order
                     </label>
                     <input
-                      type="number"
-                      className="w-full border border-[#7C8794] bg-white px-3 py-2 text-sm text-[#111827] outline-none shadow-[inset_1px_1px_0_#D1D5DB] focus:border-[#17406F]"
-                      {...register('displayOrder', { valueAsNumber: true })}
-                    />
-                    {errors.displayOrder ? (
-                      <p className="mt-2 text-xs font-bold text-red-800">
-                        {errors.displayOrder.message}
-                      </p>
-                    ) : null}
+                    type="number"
+                    readOnly={editingTechnologyId === null}
+                    className="w-full border border-[#7C8794] bg-white px-3 py-2 text-sm text-[#111827] outline-none shadow-[inset_1px_1px_0_#D1D5DB] read-only:bg-[#D1D7E0] focus:border-[#17406F]"
+                    {...register('displayOrder', { valueAsNumber: true })}
+                  />
+                  <p className="mt-2 text-xs font-bold text-[#17406F]">
+                    {editingTechnologyId === null
+                      ? 'Create modunda mevcut en büyük sıranın +1 değeri otomatik atanır.'
+                      : 'Edit modunda sıralamayı elle değiştirebilirsin.'}
+                  </p>
+                  {errors.displayOrder ? (
+                    <p className="mt-2 text-xs font-bold text-red-800">
+                      {errors.displayOrder.message}
+                    </p>
+                  ) : null}
                   </div>
 
                   <div className="lg:col-span-2">
