@@ -1,8 +1,8 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import { appConfig } from '../../config';
 import { AdminLayout } from '../../components/layout/AdminLayout';
-import { PublicLayout } from '../../components/layout/PublicLayout';
 import { AdminCertificatesPage } from '../../pages/admin/AdminCertificatesPage';
 import { AdminCvPage } from '../../pages/admin/AdminCvPage';
 import { AdminDashboardPage } from '../../pages/admin/AdminDashboardPage';
@@ -16,12 +16,39 @@ import { AdminProjectsPage } from '../../pages/admin/AdminProjectsPage';
 import { AdminTechnologiesPage } from '../../pages/admin/AdminTechnologiesPage';
 import { AdminTodosPage } from '../../pages/admin/AdminTodosPage';
 import { AdminDisabledPage } from '../../pages/common/AdminDisabledPage';
-import { NotFoundPage } from '../../pages/common/NotFoundPage';
-import { HomePage } from '../../pages/public/HomePage';
-import { ProjectDetailPage } from '../../pages/public/ProjectDetailPage';
-import { ProjectsPage } from '../../pages/public/ProjectsPage';
 import { ProtectedAdminRoute } from './ProtectedAdminRoute';
+import { RouteLoadingFallback } from './RouteLoadingFallback';
 import { routePaths } from './routePaths';
+
+const PublicLayout = lazy(() =>
+  import('../../components/layout/PublicLayout').then((module) => ({
+    default: module.PublicLayout,
+  })),
+);
+
+const HomePage = lazy(() =>
+  import('../../pages/public/HomePage').then((module) => ({
+    default: module.HomePage,
+  })),
+);
+
+const ProjectsPage = lazy(() =>
+  import('../../pages/public/ProjectsPage').then((module) => ({
+    default: module.ProjectsPage,
+  })),
+);
+
+const ProjectDetailPage = lazy(() =>
+  import('../../pages/public/ProjectDetailPage').then((module) => ({
+    default: module.ProjectDetailPage,
+  })),
+);
+
+const NotFoundPage = lazy(() =>
+  import('../../pages/common/NotFoundPage').then((module) => ({
+    default: module.NotFoundPage,
+  })),
+);
 
 const adminRoutes = appConfig.enableAdminUi
   ? [
@@ -78,5 +105,9 @@ const router = createBrowserRouter([
 ]);
 
 export function AppRouter() {
-  return <RouterProvider router={router} />;
+  return (
+    <Suspense fallback={<RouteLoadingFallback />}>
+      <RouterProvider router={router} />
+    </Suspense>
+  );
 }
