@@ -105,6 +105,14 @@ function projectStatus(project: AdminProjectListItem) {
   return <AdminStatusBadge tone="online">published</AdminStatusBadge>;
 }
 
+function getNextProjectDisplayOrder(items: AdminProjectListItem[]) {
+  if (items.length === 0) {
+    return 0;
+  }
+
+  return Math.max(...items.map((item) => item.displayOrder)) + 1;
+}
+
 export function AdminProjectsPage() {
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -141,6 +149,10 @@ export function AdminProjectsPage() {
     });
   }, [projectsQuery.data]);
 
+  const nextProjectDisplayOrder = useMemo(() => {
+    return getNextProjectDisplayOrder(projectsQuery.data ?? []);
+  }, [projectsQuery.data]);
+
   const sortedTechnologies = useMemo(() => {
     return [...(technologiesQuery.data ?? [])].sort((first, second) => {
       if (first.displayOrder !== second.displayOrder) {
@@ -160,7 +172,10 @@ export function AdminProjectsPage() {
 
   function openCreateForm() {
     setEditingProjectId(null);
-    reset(defaultProjectFormValues);
+    reset({
+      ...defaultProjectFormValues,
+      displayOrder: nextProjectDisplayOrder,
+    });
     setIsFormOpen(true);
   }
 
@@ -346,8 +361,9 @@ export function AdminProjectsPage() {
                     <label className="mb-1.5 block text-sm font-bold text-[#1F2937]">Display Order</label>
                     <input
                       type="number"
-                      className="w-full border border-[#7C8794] bg-white px-3 py-2 text-sm text-[#111827] outline-none shadow-[inset_1px_1px_0_#D1D5DB] focus:border-[#17406F]"
-                      {...register('displayOrder', { valueAsNumber: true })}
+                    readOnly={editingProjectId === null}
+                    className="w-full border border-[#7C8794] bg-white px-3 py-2 text-sm text-[#111827] outline-none shadow-[inset_1px_1px_0_#D1D5DB] read-only:bg-[#D1D7E0] focus:border-[#17406F]"
+                    {...register('displayOrder', { valueAsNumber: true })}
                     />
                     {errors.displayOrder ? (
                       <p className="mt-2 text-xs font-bold text-red-800">{errors.displayOrder.message}</p>
