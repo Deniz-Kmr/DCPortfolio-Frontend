@@ -161,6 +161,28 @@ Backend admin API security remains protected separately by JWT and Admin role au
 
 ## Full-stack Compose
 
-Full-stack Docker Compose is intentionally not part of this frontend prompt.
+Full-stack local production-like Compose is handled from the backend repository:
 
-Backend API, PostgreSQL, Docker networks, and deployment compose files will be handled separately.
+```text
+DCPortfolio-Backend/docker-compose.fullstack.yml
+```
+
+That compose file builds this frontend repository as the Nginx production image and serves it on:
+
+```text
+http://localhost:8081
+```
+
+The frontend build arg must use a browser-accessible API URL:
+
+```text
+VITE_API_BASE_URL=http://localhost:8080
+```
+
+Do not use Docker service names such as `http://api:8080` as the browser-facing frontend API URL.
+
+For more deployment preparation notes, see:
+
+```text
+docs/frontend-deployment-prep.md
+```
