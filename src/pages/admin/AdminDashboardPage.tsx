@@ -15,28 +15,53 @@ import { useAdminDashboard } from '../../features/admin-dashboard';
 const moduleCards = [
   {
     title: 'Projects Control',
-    description: 'Public portfolio projelerinin CRUD ekranı sonraki promptta eklenecek.',
+    description: 'Public portfolio projeleri için CRUD yönetimi hazır.',
     to: routePaths.admin.projects,
   },
   {
     title: 'Technologies Registry',
-    description: 'Teknoloji ikonları, görünürlük ve sıralama yönetimi sonraki CRUD akışında eklenecek.',
+    description: 'Teknoloji ikonları, görünürlük ve sıralama yönetimi hazır.',
     to: routePaths.admin.technologies,
   },
   {
     title: 'CV/Profile Record',
-    description: 'Profil, CV dosyası ve iletişim kayıtları için yönetim ekranı sonraki promptlarda eklenecek.',
+    description: 'Profil, CV dosyası ve iletişim kayıtları için CRUD yönetimi hazır.',
     to: routePaths.admin.cv,
   },
   {
     title: 'Experience Timeline',
-    description: 'Deneyim kayıtları ve yayın durumu yönetimi sonraki CRUD ekranında yapılacak.',
+    description: 'Deneyim kayıtları ve yayın durumu yönetimi hazır.',
     to: routePaths.admin.experiences,
   },
   {
     title: 'Certificate Archive',
-    description: 'Sertifika arşivi ve dosya bağlantıları yönetimi sonraki CRUD ekranında eklenecek.',
+    description: 'Sertifika arşivi ve dosya bağlantıları yönetimi hazır.',
     to: routePaths.admin.certificates,
+  },
+  {
+    title: 'DevLogs Tracker',
+    description: 'Geliştirme logları için CRUD yönetimi hazır.',
+    to: routePaths.admin.devlogs,
+  },
+  {
+    title: 'Todos Board',
+    description: 'Todo kayıtları, öncelik ve durum yönetimi hazır.',
+    to: routePaths.admin.todos,
+  },
+  {
+    title: 'Lessons Journal',
+    description: 'Ders kayıtları, süre ve tamamlanma takibi hazır.',
+    to: routePaths.admin.lessons,
+  },
+  {
+    title: 'English Plans',
+    description: 'İngilizce çalışma planları için CRUD yönetimi hazır.',
+    to: routePaths.admin.englishPlans,
+  },
+  {
+    title: 'Learning Roadmaps',
+    description: 'Öğrenme yol haritaları ve sıralama yönetimi hazır.',
+    to: routePaths.admin.learningRoadmaps,
   },
 ];
 
@@ -87,7 +112,7 @@ export function AdminDashboardPage() {
               <p className="mt-4 max-w-3xl text-sm leading-7 text-[#334155]">
                 Bu panel local kullanım için hazırlanmış admin foundation ekranıdır. Login,
                 protected route, logout, dashboard endpoint bağlantısı ve modül girişleri hazırdır.
-                CRUD ekranları sonraki promptlarda bu temel üzerine eklenecek.
+                CRUD ekranları bu temel üzerine eklendi ve admin modülleri üzerinden yönetilebilir.
               </p>
             </div>
 
@@ -236,7 +261,7 @@ export function AdminDashboardPage() {
         )}
       </AdminWindow>
 
-      <AdminWindow title="Module Switchboard" subtitle="CRUD screens will be added later">
+      <AdminWindow title="Module Switchboard" subtitle="CRUD modules are available">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {moduleCards.map((module) => (
             <AdminModuleCard
@@ -244,13 +269,13 @@ export function AdminDashboardPage() {
               title={module.title}
               description={module.description}
               to={module.to}
-              status="next"
+              status="ready"
             />
           ))}
         </div>
       </AdminWindow>
 
-      <AdminWindow title="Quick Navigation" subtitle="Admin placeholders">
+      <AdminWindow title="Quick Navigation" subtitle="Admin modules">
         <AdminPanel>
           <div className="flex flex-wrap gap-2">
             {moduleCards.map((module) => (
