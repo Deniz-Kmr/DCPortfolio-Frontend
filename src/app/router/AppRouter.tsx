@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import { appConfig } from '../../config';
 import { AdminLayout } from '../../components/layout/AdminLayout';
@@ -26,17 +26,24 @@ import { HomePage } from '../../pages/public/HomePage';
 import { ProjectDetailPage } from '../../pages/public/ProjectDetailPage';
 import { ProjectsPage } from '../../pages/public/ProjectsPage';
 import { TechnologiesPage } from '../../pages/public/TechnologiesPage';
+import { ProtectedAdminRoute } from './ProtectedAdminRoute';
+import { routePaths } from './routePaths';
 
 const adminRoutes = appConfig.enableAdminUi
   ? [
       {
-        path: '/admin/login',
+        path: routePaths.admin.login,
         element: <AdminLoginPage />,
       },
       {
         path: '/admin',
-        element: <AdminLayout />,
+        element: (
+          <ProtectedAdminRoute>
+            <AdminLayout />
+          </ProtectedAdminRoute>
+        ),
         children: [
+          { index: true, element: <Navigate to={routePaths.admin.dashboard} replace /> },
           { path: 'dashboard', element: <AdminDashboardPage /> },
           { path: 'projects', element: <AdminProjectsPage /> },
           { path: 'technologies', element: <AdminTechnologiesPage /> },
