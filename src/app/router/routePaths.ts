@@ -1,14 +1,8 @@
 export const routePaths = {
   public: {
     home: '/',
-    about: '/about',
     projects: '/projects',
     projectDetail: '/projects/:slug',
-    technologies: '/technologies',
-    cv: '/cv',
-    experience: '/experience',
-    certificates: '/certificates',
-    contact: '/contact',
   },
   admin: {
     login: '/admin/login',

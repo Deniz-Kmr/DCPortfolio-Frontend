@@ -17,15 +17,9 @@ import { AdminTechnologiesPage } from '../../pages/admin/AdminTechnologiesPage';
 import { AdminTodosPage } from '../../pages/admin/AdminTodosPage';
 import { AdminDisabledPage } from '../../pages/common/AdminDisabledPage';
 import { NotFoundPage } from '../../pages/common/NotFoundPage';
-import { AboutPage } from '../../pages/public/AboutPage';
-import { CertificatesPage } from '../../pages/public/CertificatesPage';
-import { ContactPage } from '../../pages/public/ContactPage';
-import { CvPage } from '../../pages/public/CvPage';
-import { ExperiencePage } from '../../pages/public/ExperiencePage';
 import { HomePage } from '../../pages/public/HomePage';
 import { ProjectDetailPage } from '../../pages/public/ProjectDetailPage';
 import { ProjectsPage } from '../../pages/public/ProjectsPage';
-import { TechnologiesPage } from '../../pages/public/TechnologiesPage';
 import { ProtectedAdminRoute } from './ProtectedAdminRoute';
 import { routePaths } from './routePaths';
 
@@ -71,14 +65,8 @@ const router = createBrowserRouter([
     element: <PublicLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'about', element: <AboutPage /> },
       { path: 'projects', element: <ProjectsPage /> },
       { path: 'projects/:slug', element: <ProjectDetailPage /> },
-      { path: 'technologies', element: <TechnologiesPage /> },
-      { path: 'cv', element: <CvPage /> },
-      { path: 'experience', element: <ExperiencePage /> },
-      { path: 'certificates', element: <CertificatesPage /> },
-      { path: 'contact', element: <ContactPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
