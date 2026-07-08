@@ -715,29 +715,43 @@ export function HomePage() {
                     <p className="mt-5 text-sm leading-7 text-[#6B7280]">{certificate.description}</p>
                   ) : null}
 
-                  <div className="mt-6 flex flex-wrap gap-3 border-t border-[#E3E6EA] pt-5">
-                    {certificate.credentialUrl ? (
+                  {certificate.credentialUrl || fileUrl ? (
+                    <div className="mt-6 flex flex-wrap gap-3 border-t border-[#E3E6EA] pt-5">
+                      {certificate.credentialUrl ? (
                         <a
-                        href={certificate.credentialUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="rounded-md border border-[#D1D7E0] bg-white px-4 py-2 text-sm font-medium text-[#14171C] transition hover:bg-[#F7F8FA]"
-                      >
-                        Credential ↗
-                      </a>
-                    ) : null}
+                          href={certificate.credentialUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={`${certificate.title} sertifika doğrulama bağlantısını aç`}
+                          className={`${FONT_MONO} group/link inline-flex items-center justify-center gap-2 rounded-lg border border-[#D1D7E0] bg-white px-4 py-2.5 text-xs font-semibold text-[#14171C] shadow-sm shadow-black/5 transition hover:-translate-y-0.5 hover:border-[#2563EB]/45 hover:bg-[#F7F8FA] hover:text-[#2563EB]`}
+                        >
+                          <span>Sertifikayı Görüntüle</span>
+                          <ExternalLink
+                            size={14}
+                            strokeWidth={1.9}
+                            className="transition group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+                          />
+                        </a>
+                      ) : null}
 
-                    {fileUrl ? (
+                      {fileUrl ? (
                         <a
-                        href={fileUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="rounded-md border border-[#E3E6EA] px-4 py-2 text-sm font-medium text-[#14171C] transition hover:border-[#14171C]/30"
-                      >
-                        Dosya ↗
-                      </a>
-                    ) : null}
-                  </div>
+                          href={fileUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={`${certificate.title} sertifika dosyasını aç`}
+                          className={`${FONT_MONO} group/link inline-flex items-center justify-center gap-2 rounded-lg border border-[#E3E6EA] bg-[#F7F8FA] px-4 py-2.5 text-xs font-semibold text-[#14171C] transition hover:-translate-y-0.5 hover:border-[#14171C]/30 hover:bg-white`}
+                        >
+                          <span>Dosyayı Aç</span>
+                          <ExternalLink
+                            size={14}
+                            strokeWidth={1.9}
+                            className="transition group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+                          />
+                        </a>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </motion.article>
               );
             })}
