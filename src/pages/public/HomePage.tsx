@@ -97,6 +97,25 @@ function formatDate(value: string | null) {
   }).format(date);
 }
 
+function getExperienceHighlights(description: string) {
+  const lineItems = description
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line) => line.replace(/^[-•]\s*/, '').trim())
+    .filter(Boolean);
+
+  if (lineItems.length > 1) {
+    return lineItems.slice(0, 4);
+  }
+
+  return description
+    .split('.')
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)
+    .map((sentence) => `${sentence}.`)
+    .slice(0, 3);
+}
+
 function GithubIcon() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="currentColor">
@@ -600,7 +619,7 @@ export function HomePage() {
           method="GET"
           path="/deneyim"
           title="Deneyim kayıtları"
-          description="Staj, araştırma projesi ve ürün geliştirme süreçlerinde aldığım teknik sorumluluklar."
+          description="Kariyer yolculuğumda yer aldığım ekipler, projeler ve teknik sorumluluklar."
         />
 
         {experiencesQuery.isLoading ? (
@@ -614,47 +633,88 @@ export function HomePage() {
           />
         ) : (
           <div className="relative mt-10">
-            <div className="absolute left-4 top-3 hidden h-[calc(100%-1.5rem)] w-px bg-[#94A3B8]/70 md:block" />
+            <div className="absolute left-5 top-4 hidden h-[calc(100%-2rem)] w-px bg-[#94A3B8]/70 md:block" />
 
-            <div className="space-y-5">
-              {sortedExperiences.map((experience) => (
-                <motion.article
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={motionViewport}
-                  variants={cardFade}
-                  key={experience.id}
-                  className="relative md:pl-12"
-                >
-                  <span className="absolute left-[0.56rem] top-8 hidden h-3 w-3 rounded-full border border-[#16A34A]/40 bg-[#16A34A] shadow-sm shadow-[#16A34A]/30 md:block" />
+            <div className="space-y-6">
+              {sortedExperiences.map((experience, index) => {
+                const highlights = getExperienceHighlights(experience.description ?? '');
+                const timelineNumber = sortedExperiences.length - index;
+                const periodLabel = `${formatDate(experience.startDate)} — ${
+                  experience.isCurrent ? 'Devam ediyor' : formatDate(experience.endDate)
+                }`;
 
-                  <div className="rounded-xl border border-[#E3E6EA] bg-white p-6 shadow-sm shadow-black/5 transition hover:-translate-y-1 hover:border-[#2563EB]/30 sm:p-7">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <p className={`${FONT_MONO} text-xs font-semibold text-[#2563EB]`}>
-                          {experience.companyName}
-                        </p>
-
-                        <h3 className={`${FONT_DISPLAY} mt-2 text-2xl font-bold tracking-tight text-[#14171C]`}>
-                          {experience.position}
-                        </h3>
-
-                        {experience.location ? (
-                          <p className="mt-2 text-sm text-[#64748B]">{experience.location}</p>
-                        ) : null}
-                      </div>
-
-                      <p className={`${FONT_MONO} w-fit rounded-md border border-[#E3E6EA] bg-[#F7F8FA] px-4 py-2 text-xs font-medium text-[#6B7280]`}>
-                        {formatDate(experience.startDate)} — {experience.isCurrent ? 'Devam ediyor' : formatDate(experience.endDate)}
-                      </p>
+                return (
+                  <motion.article
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={motionViewport}
+                    variants={cardFade}
+                    key={experience.id}
+                    className="group relative md:pl-14"
+                  >
+                    <div className={`${FONT_MONO} absolute left-0 top-7 hidden h-10 w-10 items-center justify-center rounded-xl border border-[#D1D7E0] bg-white text-xs font-bold text-[#2563EB] shadow-sm shadow-black/5 transition group-hover:-translate-y-0.5 group-hover:border-[#2563EB]/45 md:flex`}>
+                      {String(timelineNumber).padStart(2, '0')}
                     </div>
 
-                    <p className="mt-6 max-w-4xl whitespace-pre-line text-sm leading-8 text-[#4B5563] sm:text-base">
-                      {experience.description}
-                    </p>
-                  </div>
-                </motion.article>
-              ))}
+                    <div className="overflow-hidden rounded-2xl border border-[#D1D7E0] bg-white shadow-sm shadow-black/5 transition group-hover:-translate-y-1 group-hover:border-[#2563EB]/35 group-hover:shadow-xl group-hover:shadow-black/10">
+                      <div className="flex flex-col gap-5 border-b border-[#E3E6EA] bg-[#F7F8FA]/70 p-6 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                          <p className={`${FONT_MONO} text-xs font-semibold uppercase tracking-[0.16em] text-[#2563EB]`}>
+                            {experience.companyName}
+                          </p>
+
+                          <h3 className={`${FONT_DISPLAY} mt-3 text-2xl font-extrabold tracking-tight text-[#14171C]`}>
+                            {experience.position}
+                          </h3>
+
+                          {experience.location ? (
+                            <p className="mt-2 text-sm font-medium text-[#64748B]">{experience.location}</p>
+                          ) : null}
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 sm:justify-end">
+                          <span className={`${FONT_MONO} rounded-lg border border-[#D1D7E0] bg-white px-4 py-2 text-xs font-semibold text-[#475569] shadow-sm shadow-black/5`}>
+                            {periodLabel}
+                          </span>
+
+                          <span className={`${FONT_MONO} rounded-lg border border-[#16A34A]/20 bg-[#16A34A]/10 px-4 py-2 text-xs font-semibold text-[#16A34A]`}>
+                            {experience.isCurrent ? 'Aktif' : 'Tamamlandı'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="p-6">
+                        <div className="flex items-center gap-2.5">
+                          <MethodBadge method="GET" />
+                          <span className={`${FONT_MONO} text-xs text-[#64748B]`}>
+                            /deneyim/{timelineNumber}
+                          </span>
+                          <span className="h-px flex-1 bg-[#D1D7E0]" />
+                          <span className={`${FONT_MONO} text-[11px] text-[#64748B]`}>200 OK</span>
+                        </div>
+
+                        {highlights.length > 0 ? (
+                          <ul className="mt-5 grid gap-3 lg:grid-cols-2">
+                            {highlights.map((highlight) => (
+                              <li
+                                key={highlight}
+                                className="flex gap-3 rounded-xl border border-[#E3E6EA] bg-[#F7F8FA] p-4 text-sm leading-7 text-[#4B5563]"
+                              >
+                                <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#16A34A]" />
+                                <span>{highlight}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="mt-5 rounded-xl border border-[#E3E6EA] bg-[#F7F8FA] p-4 text-sm leading-7 text-[#6B7280]">
+                            Bu deneyim için açıklama yakında eklenecek.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </motion.article>
+                );
+              })}
             </div>
           </div>
         )}
