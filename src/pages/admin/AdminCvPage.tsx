@@ -26,6 +26,7 @@ const cvProfileFormSchema = z.object({
   fullName: z.string().min(1, 'Ad soyad zorunludur.'),
   title: z.string().min(1, 'Ünvan zorunludur.'),
   summary: z.string().min(1, 'Özet zorunludur.'),
+  aboutText: z.string().max(4000, 'Hakkımda metni en fazla 4000 karakter olabilir.'),
   location: z.string(),
   email: z.string().min(1, 'Email zorunludur.').email('Geçerli bir email giriniz.'),
   phone: z.string(),
@@ -40,6 +41,7 @@ const defaultCvProfileFormValues: CvProfileFormValues = {
   fullName: '',
   title: '',
   summary: '',
+  aboutText: '',
   location: '',
   email: '',
   phone: '',
@@ -61,6 +63,7 @@ function toCvProfileRequest(
     fullName: values.fullName.trim(),
     title: values.title.trim(),
     summary: values.summary.trim(),
+    aboutText: nullableText(values.aboutText),
     location: nullableText(values.location),
     email: values.email.trim(),
     phone: nullableText(values.phone),
@@ -75,6 +78,7 @@ function toCvProfileFormValues(profile: AdminCvProfile): CvProfileFormValues {
     fullName: profile.fullName,
     title: profile.title,
     summary: profile.summary,
+    aboutText: profile.aboutText ?? '',
     location: profile.location ?? '',
     email: profile.email,
     phone: profile.phone ?? '',
@@ -257,6 +261,19 @@ export function AdminCvPage() {
                 ) : null}
               </div>
 
+              <div>
+                <label className="mb-1.5 block text-sm font-bold text-[#1F2937]">Hakkımda Metni</label>
+                <textarea
+                  rows={8}
+                  className="w-full border border-[#7C8794] bg-white px-3 py-2 text-sm text-[#111827] outline-none shadow-[inset_1px_1px_0_#D1D5DB] focus:border-[#17406F]"
+                  placeholder="Public Hakkımda bölümünde gösterilecek uzun metin."
+                  {...register('aboutText')}
+                />
+                {errors.aboutText ? (
+                  <p className="mt-2 text-xs font-bold text-red-800">{errors.aboutText.message}</p>
+                ) : null}
+              </div>
+
               <div className="grid gap-4 lg:grid-cols-3">
                 <div>
                   <label className="mb-1.5 block text-sm font-bold text-[#1F2937]">Email</label>
@@ -380,6 +397,15 @@ export function AdminCvPage() {
                     <p className="mt-3 max-w-4xl text-sm leading-7 text-[#334155]">
                       {profile.summary}
                     </p>
+
+                    <div className="mt-4 border border-[#B6C1D1] bg-[#F8FAFC] p-4">
+                      <p className="text-xs font-black uppercase tracking-[0.16em] text-[#64748B]">
+                        Hakkımda
+                      </p>
+                      <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#334155]">
+                        {profile.aboutText || 'Henüz hakkımda metni eklenmedi.'}
+                      </p>
+                    </div>
 
                     <dl className="mt-4 grid gap-3 text-sm md:grid-cols-2 xl:grid-cols-3">
                       <div>

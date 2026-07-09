@@ -1,6 +1,6 @@
 import { motion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, ExternalLink, FileText, Mail } from 'lucide-react';
+import { ArrowRight, ExternalLink, FileText, Mail, MapPin } from 'lucide-react';
 
 import { EmptyState, ErrorState, LoadingState } from '../../components/common/data-state';
 import { usePublicCertificates } from '../../features/certificates/hooks';
@@ -9,28 +9,6 @@ import { usePublicExperiences } from '../../features/experiences/hooks';
 import { usePublicProjects } from '../../features/projects/hooks';
 import { useGroupedPublicTechnologies } from '../../features/technologies/hooks';
 import { buildBackendFileUrl } from '../../utils/backendUrl';
-
-/**
- * FONT SETUP (add to index.html <head>, once):
- *
- * <link rel="preconnect" href="https://fonts.googleapis.com">
- * <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
- * <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
- *
- * Concept: the page reads like API documentation for a person — every
- * section is a labeled HTTP route (GET /projeler, POST /iletişim), and the
- * hero is a live-looking request/response panel built from real profile data.
- *
- * Tokens:
- *   paper   #F7F8FA  page background
- *   surface #FFFFFF  card surface
- *   line    #E3E6EA  hairline borders
- *   ink     #14171C  primary text
- *   mute    #6B7280  secondary text
- *   get     #2563EB  GET method blue
- *   post    #16A34A  POST method green
- *   code    #0F1115  code panel background
- */
 
 const FONT_DISPLAY = "font-['Manrope']";
 const FONT_MONO = "font-['IBM_Plex_Mono']";
@@ -132,7 +110,6 @@ function LinkedinIcon() {
   );
 }
 
-/** Method badge, e.g. GET / POST — colored like an API client. */
 function MethodBadge({ method }: { method: 'GET' | 'POST' }) {
   const isGet = method === 'GET';
   return (
@@ -146,7 +123,6 @@ function MethodBadge({ method }: { method: 'GET' | 'POST' }) {
   );
 }
 
-/** Route-style section header: METHOD /path ............ 200 OK */
 function RouteHeader({
   method,
   path,
@@ -231,6 +207,12 @@ export function HomePage() {
   const displaySummary =
     profile?.summary ??
     'Güvenli API yapıları, yönetilebilir backend sistemleri ve gerçek veriye bağlı sade portfolio deneyimleri üzerine çalışıyorum.';
+
+  const aboutText = profile?.aboutText?.trim() || displaySummary;
+  const aboutParagraphs = aboutText
+    .split(/\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
 
   return (
     <motion.div
@@ -361,26 +343,25 @@ export function HomePage() {
             variants={cardFade}
             className="rounded-xl border border-[#E3E6EA] bg-white p-7 shadow-sm shadow-black/5 sm:p-8"
           >
-            <p className="font-['IBM_Plex_Mono'] text-xs font-semibold uppercase tracking-[0.16em] text-[#16A34A]">
-              Hakkımda
-            </p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="font-['IBM_Plex_Mono'] text-xs font-semibold uppercase tracking-[0.16em] text-[#16A34A]">
+                Hakkımda
+              </p>
+
+              {profile?.location ? (
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#D1D7E0] bg-[#F7F8FA] px-3 py-1.5 text-xs font-semibold text-[#475569]">
+                  <MapPin size={14} strokeWidth={1.9} />
+                  <span>{profile.location}</span>
+                </span>
+              ) : null}
+            </div>
 
             <div className="mt-5 space-y-5 text-base leading-8 text-[#374151]">
-              <p>
-                Merhaba, ben Deniz Çelik.
-              </p>
-
-              <p>
-                İskenderun Teknik Üniversitesi Bilgisayar Mühendisliği bölümünden 3.11 genel not ortalamasıyla mezun oldum. .NET, C#, ASP.NET Core, PostgreSQL ve Flutter ile backend odaklı, veri yönetimi güçlü ve kullanıcıya ulaşan uçtan uca uygulamalar geliştirmeye odaklanıyorum.
-              </p>
-
-              <p>
-                Yazılım geliştirme sürecinde yalnızca kod yazmayı değil; kurumların dijital dönüşüm süreçlerine katkı sağlayan, rutin işleri otomatikleştiren ve operasyonel yükü azaltan çözümler üretmeyi önemsiyorum. API mimarisi, servis sorumlulukları, veri akışı ve güvenlik gibi backend konularının yanında; sunucu yönetimi, ağ altyapısı ve sistem çözümleriyle de projelere daha bütünsel yaklaşmaya çalışıyorum.
-              </p>
-
-              <p>
-                Amacım; sürdürülebilir, geliştirilebilir ve gerçek ihtiyaçlara cevap veren yazılım çözümleri üreterek kurumsal süreçlere teknik değer katmak.
-              </p>
+              {aboutParagraphs.map((paragraph, index) => (
+                <p key={`${index}-${paragraph.slice(0, 24)}`}>
+                  {paragraph}
+                </p>
+              ))}
             </div>
           </motion.article>
 
