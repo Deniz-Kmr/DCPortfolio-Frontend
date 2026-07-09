@@ -5,6 +5,21 @@ export interface AdminProjectTechnology {
   category: string | null;
 }
 
+export interface AdminProjectImage {
+  id: number;
+  imageUrl: string;
+  altText: string | null;
+  displayOrder: number;
+  isCover: boolean;
+}
+
+export interface AdminProjectImageRequest {
+  imageUrl: string;
+  altText: string | null;
+  displayOrder: number;
+  isCover: boolean;
+}
+
 export interface AdminProjectListItem {
   id: number;
   title: string;
@@ -30,6 +45,7 @@ export interface AdminProjectDetail {
   isFeatured: boolean;
   isPublished: boolean;
   displayOrder: number;
+  images: AdminProjectImage[];
   technologies: AdminProjectTechnology[];
   createdAt: string;
   updatedAt: string | null;
@@ -47,6 +63,7 @@ export interface AdminProjectCreateRequest {
   isPublished: boolean;
   displayOrder: number;
   technologyIds: number[];
+  images?: AdminProjectImageRequest[];
 }
 
 export interface AdminProjectUpdateRequest {
@@ -61,4 +78,5 @@ export interface AdminProjectUpdateRequest {
   isPublished: boolean;
   displayOrder: number;
   technologyIds: number[];
+  images?: AdminProjectImageRequest[];
 }
