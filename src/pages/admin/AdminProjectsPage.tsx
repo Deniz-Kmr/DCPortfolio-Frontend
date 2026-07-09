@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import {
@@ -37,6 +37,22 @@ const projectFormSchema = z.object({
   isPublished: z.boolean(),
   displayOrder: z.number().int('Sıralama tam sayı olmalıdır.').min(0, 'Sıralama 0 veya üstü olmalıdır.'),
   technologyIds: z.array(z.number()),
+  images: z
+    .array(
+      z.object({
+        imageUrl: z
+          .string()
+          .min(1, 'Görsel yolu zorunludur.')
+          .max(500, 'Görsel yolu en fazla 500 karakter olabilir.'),
+        altText: z.string().max(200, 'Alternatif metin en fazla 200 karakter olabilir.'),
+        displayOrder: z
+          .number()
+          .int('Görsel sırası tam sayı olmalıdır.')
+          .min(0, 'Görsel sırası negatif olamaz.'),
+        isCover: z.boolean(),
+      }),
+    )
+    .max(10, 'En fazla 10 galeri görseli eklenebilir.'),
 });
 
 type ProjectFormValues = z.infer<typeof projectFormSchema>;
@@ -53,6 +69,7 @@ const defaultProjectFormValues: ProjectFormValues = {
   isPublished: true,
   displayOrder: 0,
   technologyIds: [],
+  images: [],
 };
 
 function nullableText(value: string) {
@@ -74,6 +91,12 @@ function toProjectRequest(values: ProjectFormValues): AdminProjectCreateRequest 
     isPublished: values.isPublished,
     displayOrder: values.displayOrder,
     technologyIds: values.technologyIds,
+    images: values.images.map((image) => ({
+      imageUrl: image.imageUrl.trim(),
+      altText: nullableText(image.altText),
+      displayOrder: image.displayOrder,
+      isCover: image.isCover,
+    })),
   };
 }
 
@@ -90,6 +113,12 @@ function toProjectFormValues(project: AdminProjectDetail): ProjectFormValues {
     isPublished: project.isPublished,
     displayOrder: project.displayOrder,
     technologyIds: project.technologies.map((technology) => technology.id),
+    images: project.images.map((image) => ({
+      imageUrl: image.imageUrl,
+      altText: image.altText ?? '',
+      displayOrder: image.displayOrder,
+      isCover: image.isCover,
+    })),
   };
 }
 
@@ -131,6 +160,7 @@ export function AdminProjectsPage() {
     reset,
     watch,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ProjectFormValues>({
     resolver: zodResolver(projectFormSchema),
@@ -138,6 +168,15 @@ export function AdminProjectsPage() {
   });
 
   const selectedTechnologyIds = watch('technologyIds');
+
+  const {
+    fields: imageFields,
+    append: appendImage,
+    remove: removeImage,
+  } = useFieldArray({
+    control,
+    name: 'images',
+  });
 
   const sortedProjects = useMemo(() => {
     return [...(projectsQuery.data ?? [])].sort((first, second) => {
@@ -344,6 +383,116 @@ export function AdminProjectsPage() {
                       {...register('imageUrl')}
                     />
                   </div>
+                </div>
+
+
+                <div className="border border-[#9AA4B2] bg-[#F8FAFC] p-4 shadow-[inset_1px_1px_0_#ffffff]">
+                  <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <label className="text-sm font-bold text-[#1F2937]">Gallery Images</label>
+                      <p className="mt-1 text-xs font-semibold leading-5 text-[#64748B]">
+                        Image URL ana kart/cover görselidir. Galeri görselleri sadece proje detayındaki Proje Galerisi bölümünde gösterilir.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={imageFields.length >= 10}
+                      onClick={() =>
+                        appendImage({
+                          imageUrl: '',
+                          altText: '',
+                          displayOrder: imageFields.length + 1,
+                          isCover: imageFields.length === 0,
+                        })
+                      }
+                      className="border border-[#17406F] bg-[#D7E9FF] px-3 py-2 text-xs font-black text-[#082F5F] shadow-[inset_1px_1px_0_#ffffff] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      + Galeri Görseli Ekle
+                    </button>
+                  </div>
+
+                  {errors.images?.message ? (
+                    <p className="mb-3 text-xs font-bold text-red-800">{errors.images.message}</p>
+                  ) : null}
+
+                  {imageFields.length === 0 ? (
+                    <div className="border border-dashed border-[#9AA4B2] bg-[#E9EDF4] p-4 text-sm font-bold text-[#334155]">
+                      Henüz galeri görseli yok. Galeri boşsa public detay sayfası Image URL alanını fallback olarak kullanır.
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {imageFields.map((field, index) => (
+                        <div
+                          key={field.id}
+                          className="border border-[#B6C1D1] bg-white p-4 shadow-[inset_1px_1px_0_#E2E8F0]"
+                        >
+                          <div className="mb-3 flex items-center justify-between gap-3">
+                            <p className="font-mono text-xs font-black uppercase tracking-[0.14em] text-[#17406F]">
+                              Gallery #{index + 1}
+                            </p>
+
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index)}
+                              className="border border-red-700 bg-red-100 px-3 py-1.5 text-xs font-black text-red-900 transition hover:bg-white"
+                            >
+                              Sil
+                            </button>
+                          </div>
+
+                          <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr_0.45fr]">
+                            <div>
+                              <label className="mb-1.5 block text-xs font-bold text-[#1F2937]">Image URL</label>
+                              <input
+                                className="w-full border border-[#7C8794] bg-white px-3 py-2 text-sm text-[#111827] outline-none shadow-[inset_1px_1px_0_#D1D5DB] focus:border-[#17406F]"
+                                placeholder="/images/projects/interviewdev-backend/gallery-1.png"
+                                {...register(`images.${index}.imageUrl`)}
+                              />
+                              {errors.images?.[index]?.imageUrl ? (
+                                <p className="mt-2 text-xs font-bold text-red-800">
+                                  {errors.images[index]?.imageUrl?.message}
+                                </p>
+                              ) : null}
+                            </div>
+
+                            <div>
+                              <label className="mb-1.5 block text-xs font-bold text-[#1F2937]">Alt Text</label>
+                              <input
+                                className="w-full border border-[#7C8794] bg-white px-3 py-2 text-sm text-[#111827] outline-none shadow-[inset_1px_1px_0_#D1D5DB] focus:border-[#17406F]"
+                                placeholder="Proje galeri görseli"
+                                {...register(`images.${index}.altText`)}
+                              />
+                              {errors.images?.[index]?.altText ? (
+                                <p className="mt-2 text-xs font-bold text-red-800">
+                                  {errors.images[index]?.altText?.message}
+                                </p>
+                              ) : null}
+                            </div>
+
+                            <div>
+                              <label className="mb-1.5 block text-xs font-bold text-[#1F2937]">Order</label>
+                              <input
+                                type="number"
+                                className="w-full border border-[#7C8794] bg-white px-3 py-2 text-sm text-[#111827] outline-none shadow-[inset_1px_1px_0_#D1D5DB] focus:border-[#17406F]"
+                                {...register(`images.${index}.displayOrder`, { valueAsNumber: true })}
+                              />
+                              {errors.images?.[index]?.displayOrder ? (
+                                <p className="mt-2 text-xs font-bold text-red-800">
+                                  {errors.images[index]?.displayOrder?.message}
+                                </p>
+                              ) : null}
+                            </div>
+                          </div>
+
+                          <label className="mt-3 flex items-center gap-3 border border-[#D1D7E0] bg-[#EEF1F5] p-3 text-xs font-bold text-[#1F2937]">
+                            <input type="checkbox" {...register(`images.${index}.isCover`)} />
+                            Cover olarak işaretle
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid gap-4 lg:grid-cols-3">

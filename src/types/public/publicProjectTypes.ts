@@ -6,6 +6,14 @@ export interface PublicProjectTechnology {
   skillLevel: string;
 }
 
+export interface PublicProjectImage {
+  id: number;
+  imageUrl: string;
+  altText: string | null;
+  displayOrder: number;
+  isCover: boolean;
+}
+
 export interface PublicProjectListItem {
   id: number;
   title: string;
@@ -30,5 +38,6 @@ export interface PublicProjectDetail {
   imageUrl: string | null;
   isFeatured: boolean;
   createdAt: string;
+  images: PublicProjectImage[];
   technologies: PublicProjectTechnology[];
 }
