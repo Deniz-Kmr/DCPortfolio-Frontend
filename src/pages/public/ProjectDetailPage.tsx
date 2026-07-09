@@ -85,6 +85,34 @@ export function ProjectDetailPage() {
   const projectQuery = usePublicProjectDetail(slug);
   const project = projectQuery.data ?? null;
   const imageUrl = resolveAssetUrl(project?.imageUrl);
+  const galleryImages = project
+    ? project.images.length > 0
+      ? project.images
+          .map((image) => {
+            const resolvedUrl = resolveAssetUrl(image.imageUrl);
+
+            return resolvedUrl
+              ? {
+                  id: image.id,
+                  imageUrl: resolvedUrl,
+                  altText: image.altText ?? `${project.title} galeri görseli`,
+                  displayOrder: image.displayOrder,
+                }
+              : null;
+          })
+          .filter((image): image is { id: number; imageUrl: string; altText: string; displayOrder: number } => image !== null)
+      : imageUrl
+        ? [
+            {
+              id: 0,
+              imageUrl,
+              altText: `${project.title} kapak görseli`,
+              displayOrder: 0,
+            },
+          ]
+        : []
+    : [];
+
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
   if (!slug) {
@@ -279,7 +307,7 @@ export function ProjectDetailPage() {
               </motion.aside>
             </section>
 
-            {imageUrl ? (
+            {galleryImages.length > 0 ? (
               <motion.section
                 initial="hidden"
                 whileInView="visible"
@@ -297,24 +325,36 @@ export function ProjectDetailPage() {
                   </div>
 
                   <p className={`${FONT_MONO} text-xs font-medium text-[#64748B]`}>
-                    Ekran görüntüsünü büyütmek için tıkla.
+                    {galleryImages.length} görsel · Büyütmek için tıkla.
                   </p>
                 </div>
 
-                <div className="mt-7 grid gap-5 md:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewImageUrl(imageUrl)}
-                    className="group rounded-md bg-[#F7F8FA] p-3 text-left transition hover:-translate-y-1"
-                    aria-label={`${project.title} galeri görselini büyüt`}
-                  >
-                    <img
-                      src={imageUrl}
-                      alt={`${project.title} ekran görüntüsü`}
-                      className="aspect-video w-full rounded-md bg-white object-contain p-2 transition duration-300 group-hover:scale-[1.01]"
-                      loading="lazy"
-                    />
-                  </button>
+                <div className={`mt-7 grid gap-5 ${galleryImages.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'}`}>
+                  {galleryImages.map((image) => (
+                    <button
+                      key={`${image.id}-${image.displayOrder}-${image.imageUrl}`}
+                      type="button"
+                      onClick={() => setPreviewImageUrl(image.imageUrl)}
+                      className="group rounded-md bg-[#F7F8FA] p-3 text-left transition hover:-translate-y-1"
+                      aria-label={`${image.altText} görselini büyüt`}
+                    >
+                      <img
+                        src={image.imageUrl}
+                        alt={image.altText}
+                        className="aspect-video w-full rounded-md bg-white object-contain p-2 transition duration-300 group-hover:scale-[1.01]"
+                        loading="lazy"
+                      />
+
+                      <div className="mt-3 flex items-start gap-3 rounded-md border border-[#D1D7E0] bg-white px-3 py-2">
+                        <span className={`${FONT_MONO} shrink-0 text-[11px] font-bold text-[#16A34A]`}>
+                          {String(image.displayOrder).padStart(2, '0')}
+                        </span>
+                        <p className="text-xs font-semibold leading-5 text-[#475569]">
+                          {image.altText}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </motion.section>
             ) : null}
