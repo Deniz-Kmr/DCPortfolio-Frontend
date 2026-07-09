@@ -3,6 +3,7 @@ export interface AdminCvProfile {
   fullName: string;
   title: string;
   summary: string;
+  aboutText: string | null;
   location: string | null;
   email: string;
   phone: string | null;
@@ -17,6 +18,7 @@ export interface AdminCvProfileCreateRequest {
   fullName: string;
   title: string;
   summary: string;
+  aboutText: string | null;
   location: string | null;
   email: string;
   phone: string | null;
@@ -29,6 +31,7 @@ export interface AdminCvProfileUpdateRequest {
   fullName: string;
   title: string;
   summary: string;
+  aboutText: string | null;
   location: string | null;
   email: string;
   phone: string | null;
