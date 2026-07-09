@@ -14,31 +14,38 @@ const FONT_DISPLAY = "font-['Manrope']";
 const FONT_MONO = "font-['IBM_Plex_Mono']";
 const FONT_BODY = "font-['Inter']";
 
-const motionViewport = { once: true, amount: 0.18 } as const;
+const motionViewport = { once: true, amount: 0.14 } as const;
 
 const pageFade: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { duration: 0.45, ease: "easeOut" },
+    transition: { duration: 0.28, ease: "easeOut" },
   },
 };
 
 const sectionFade: Variants = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    y: 0,
-    transition: { duration: 0.55, ease: "easeOut" },
+    transition: { duration: 0.28, ease: "easeOut" },
   },
 };
 
 const cardFade: Variants = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: {
+    opacity: 0,
+    y: 24,
+    scale: 0.985,
+  },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.42, ease: "easeOut" },
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: [0.16, 1, 0.3, 1],
+    },
   },
 };
 
