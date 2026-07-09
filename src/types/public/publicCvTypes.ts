@@ -3,6 +3,7 @@ export interface PublicCvProfile {
   fullName: string;
   title: string;
   summary: string;
+  aboutText: string | null;
   location: string | null;
   email: string | null;
   githubUrl: string | null;
