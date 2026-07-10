@@ -30,7 +30,7 @@ const moduleCards = [
   },
   {
     title: 'Experience Timeline',
-    description: 'Deneyim kayıtları ve yayın durumu yönetimi hazır.',
+    description: 'Deneyimler ve yayın durumu yönetimi hazır.',
     to: routePaths.admin.experiences,
   },
   {

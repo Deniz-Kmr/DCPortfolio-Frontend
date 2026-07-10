@@ -606,7 +606,7 @@ export function HomePage() {
         <RouteHeader
           method="GET"
           path="/deneyim"
-          title="Deneyim kayıtları"
+          title="Deneyimler"
           description="Kariyer yolculuğumda yer aldığım ekipler, projeler ve teknik sorumluluklar."
         />
 
@@ -616,7 +616,7 @@ export function HomePage() {
           <ErrorState title="Deneyimler yüklenemedi." message={getErrorMessage(experiencesQuery.error)} />
         ) : sortedExperiences.length === 0 ? (
           <EmptyState
-            title="Deneyim kayıtları yakında eklenecek."
+            title="Deneyimler yakında eklenecek."
             message="Yayınlanan deneyimler burada zaman çizelgesi olarak gösterilecek."
           />
         ) : (
