@@ -7,7 +7,8 @@ export const apiRoutes = {
   public: {
     projects: '/api/public/projects',
     featuredProjects: '/api/public/projects/featured',
-    projectBySlug: (slug: string) => `/api/public/projects/${encodeURIComponent(slug)}`,
+    projectBySlug: (slug: string) =>
+      `/api/public/projects/${encodeURIComponent(slug)}`,
     technologies: '/api/public/technologies',
     groupedTechnologies: '/api/public/technologies/grouped',
     cv: '/api/public/cv',
@@ -16,6 +17,12 @@ export const apiRoutes = {
   },
   admin: {
     dashboard: '/api/admin/dashboard',
+
+    monitoringSummary: '/api/admin/monitoring/summary',
+    monitoringTraffic: '/api/admin/monitoring/traffic',
+    monitoringHealth: '/api/admin/monitoring/health',
+    monitoringHistory: (days: number) =>
+      `/api/admin/monitoring/history?days=${encodeURIComponent(days)}`,
 
     projects: '/api/admin/projects',
     projectById: (id: number) => `/api/admin/projects/${id}`,
@@ -42,9 +49,11 @@ export const apiRoutes = {
     lessonById: (id: number) => `/api/admin/lessons/${id}`,
 
     englishPlans: '/api/admin/english-plans',
-    englishPlanById: (id: number) => `/api/admin/english-plans/${id}`,
+    englishPlanById: (id: number) =>
+      `/api/admin/english-plans/${id}`,
 
     learningRoadmaps: '/api/admin/learning-roadmaps',
-    learningRoadmapById: (id: number) => `/api/admin/learning-roadmaps/${id}`,
+    learningRoadmapById: (id: number) =>
+      `/api/admin/learning-roadmaps/${id}`,
   },
 } as const;
