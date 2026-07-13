@@ -55,6 +55,12 @@ const AdminDashboardPage = lazy(() =>
   })),
 );
 
+const AdminMonitoringPage = lazy(() =>
+  import('../../pages/admin/AdminMonitoringPage').then((module) => ({
+    default: module.AdminMonitoringPage,
+  })),
+);
+
 const AdminProjectsPage = lazy(() =>
   import('../../pages/admin/AdminProjectsPage').then((module) => ({
     default: module.AdminProjectsPage,
@@ -131,6 +137,7 @@ const adminRoutes = appConfig.enableAdminUi
         children: [
           { index: true, element: <Navigate to={routePaths.admin.dashboard} replace /> },
           { path: 'dashboard', element: <AdminDashboardPage /> },
+          { path: 'monitoring', element: <AdminMonitoringPage /> },
           { path: 'projects', element: <AdminProjectsPage /> },
           { path: 'technologies', element: <AdminTechnologiesPage /> },
           { path: 'cv', element: <AdminCvPage /> },

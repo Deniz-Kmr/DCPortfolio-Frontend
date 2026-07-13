@@ -14,6 +14,11 @@ import { useAdminDashboard } from '../../features/admin-dashboard';
 
 const moduleCards = [
   {
+    title: 'Production Monitoring',
+    description:'Production trafik, sistem, container, TLS, backup ve geçmiş raporları hazır.',
+    to: routePaths.admin.monitoring,
+  },
+  {
     title: 'Projects Control',
     description: 'Public portfolio projeleri için CRUD yönetimi hazır.',
     to: routePaths.admin.projects,
