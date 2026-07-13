@@ -7,6 +7,7 @@ export const routePaths = {
   admin: {
     login: '/admin/login',
     dashboard: '/admin/dashboard',
+    monitoring: '/admin/monitoring',
     projects: '/admin/projects',
     technologies: '/admin/technologies',
     cv: '/admin/cv',
