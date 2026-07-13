@@ -10,3 +10,4 @@ export type * from './adminLessonTypes';
 export type * from './adminEnglishPlanTypes';
 export type * from './adminLearningRoadmapTypes';
 export type * from './adminEnumTypes';
+export type * from './adminMonitoringTypes';
