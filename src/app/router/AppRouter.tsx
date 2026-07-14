@@ -67,6 +67,12 @@ const AdminProjectsPage = lazy(() =>
   })),
 );
 
+const AdminHomeProjectsPage = lazy(() =>
+  import('../../pages/admin/AdminHomeProjectsPage').then((module) => ({
+    default: module.AdminHomeProjectsPage,
+  })),
+);
+
 const AdminTechnologiesPage = lazy(() =>
   import('../../pages/admin/AdminTechnologiesPage').then((module) => ({
     default: module.AdminTechnologiesPage,
@@ -139,6 +145,7 @@ const adminRoutes = appConfig.enableAdminUi
           { path: 'dashboard', element: <AdminDashboardPage /> },
           { path: 'monitoring', element: <AdminMonitoringPage /> },
           { path: 'projects', element: <AdminProjectsPage /> },
+          { path: 'home-projects', element: <AdminHomeProjectsPage /> },
           { path: 'technologies', element: <AdminTechnologiesPage /> },
           { path: 'cv', element: <AdminCvPage /> },
           { path: 'experiences', element: <AdminExperiencesPage /> },
