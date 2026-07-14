@@ -26,6 +26,7 @@ export interface AdminProjectListItem {
   slug: string;
   shortDescription: string;
   isFeatured: boolean;
+  homeDisplayOrder: number | null;
   isPublished: boolean;
   displayOrder: number;
   technologies: AdminProjectTechnology[];
@@ -43,6 +44,7 @@ export interface AdminProjectDetail {
   demoUrl: string | null;
   imageUrl: string | null;
   isFeatured: boolean;
+  homeDisplayOrder: number | null;
   isPublished: boolean;
   displayOrder: number;
   images: AdminProjectImage[];
@@ -79,4 +81,8 @@ export interface AdminProjectUpdateRequest {
   displayOrder: number;
   technologyIds: number[];
   images?: AdminProjectImageRequest[];
+}
+
+export interface UpdateHomeProjectSelectionRequest {
+  projectIds: number[];
 }

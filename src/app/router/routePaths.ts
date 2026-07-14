@@ -9,6 +9,7 @@ export const routePaths = {
     dashboard: '/admin/dashboard',
     monitoring: '/admin/monitoring',
     projects: '/admin/projects',
+    homeProjects: '/admin/home-projects',
     technologies: '/admin/technologies',
     cv: '/admin/cv',
     experiences: '/admin/experiences',

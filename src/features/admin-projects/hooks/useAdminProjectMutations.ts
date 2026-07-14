@@ -5,11 +5,14 @@ import {
   createAdminProject,
   deleteAdminProject,
   updateAdminProject,
+  updateHomeProjectSelection,
 } from '../../../services/admin';
 import type {
   AdminProjectCreateRequest,
   AdminProjectDetail,
   AdminProjectUpdateRequest,
+  AdminProjectListItem,
+  UpdateHomeProjectSelectionRequest,
 } from '../../../types/admin';
 
 type UpdateAdminProjectVariables = {
@@ -61,6 +64,42 @@ export function useUpdateAdminProject() {
         queryClient.invalidateQueries({ queryKey: queryKeys.admin.projects }),
         queryClient.invalidateQueries({ queryKey: queryKeys.admin.projectDetail(project.id) }),
         queryClient.invalidateQueries({ queryKey: queryKeys.admin.dashboard }),
+      ]);
+    },
+  });
+}
+
+export function useUpdateHomeProjectSelection() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    AdminProjectListItem[],
+    Error,
+    UpdateHomeProjectSelectionRequest
+  >({
+    mutationFn: async (request) => {
+      const response = await updateHomeProjectSelection(request);
+
+      if (!response.success || !response.data) {
+        throw new Error(getProjectMutationErrorMessage(response.message));
+      }
+
+      return response.data;
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.admin.projects,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.admin.dashboard,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.public.projects,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.public.featuredProjects,
+        }),
       ]);
     },
   });
