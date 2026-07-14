@@ -25,6 +25,7 @@ export const apiRoutes = {
       `/api/admin/monitoring/history?days=${encodeURIComponent(days)}`,
 
     projects: '/api/admin/projects',
+    homeProjectSelection: '/api/admin/projects/home-selection',
     projectById: (id: number) => `/api/admin/projects/${id}`,
 
     technologies: '/api/admin/technologies',

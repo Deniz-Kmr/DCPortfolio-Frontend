@@ -12,6 +12,7 @@ const adminItems = [
   { label: 'Dashboard', to: routePaths.admin.dashboard },
   { label: 'Monitoring', to: routePaths.admin.monitoring },
   { label: 'Projects', to: routePaths.admin.projects },
+  { label: 'Home Projects', to: routePaths.admin.homeProjects },
   { label: 'Technologies', to: routePaths.admin.technologies },
   { label: 'CV/Profile', to: routePaths.admin.cv },
   { label: 'Experiences', to: routePaths.admin.experiences },
