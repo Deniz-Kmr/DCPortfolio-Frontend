@@ -1,12 +1,21 @@
 import { motion, type Variants } from "framer-motion";
+import { useState } from 'react';
 import { Link } from "react-router-dom";
-import { ArrowRight, ExternalLink, FileText, Mail, MapPin } from 'lucide-react';
+import {
+  ArrowRight,
+  Check,
+  Copy,
+  ExternalLink,
+  FileText,
+  Mail,
+  MapPin,
+} from 'lucide-react';
 
 import { EmptyState, ErrorState, LoadingState } from '../../components/common/data-state';
 import { usePublicCertificates } from '../../features/certificates/hooks';
 import { usePublicCv } from '../../features/cv/hooks';
 import { usePublicExperiences } from '../../features/experiences/hooks';
-import { usePublicProjects } from '../../features/projects/hooks';
+import { useFeaturedPublicProjects } from '../../features/projects/hooks';
 import { useGroupedPublicTechnologies } from '../../features/technologies/hooks';
 import { buildBackendFileUrl } from '../../utils/backendUrl';
 
@@ -160,15 +169,50 @@ function RouteHeader({
 }
 
 export function HomePage() {
+  const [copiedEmail, setCopiedEmail] = useState(false);
+
+  async function handleCopyEmail(email: string) {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(email);
+      } else {
+        const textarea = document.createElement('textarea');
+
+        textarea.value = email;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        const copied = document.execCommand('copy');
+
+        document.body.removeChild(textarea);
+
+        if (!copied) {
+          throw new Error('Kopyalama desteklenmiyor.');
+        }
+      }
+
+      setCopiedEmail(true);
+
+      window.setTimeout(() => {
+        setCopiedEmail(false);
+      }, 2000);
+    } catch {
+      window.prompt('E-posta adresini elle kopyalayabilirsin:', email);
+    }
+  }
+
   const cvQuery = usePublicCv();
-  const projectsQuery = usePublicProjects();
+  const projectsQuery = useFeaturedPublicProjects();
   const technologyGroupsQuery = useGroupedPublicTechnologies();
   const experiencesQuery = usePublicExperiences();
   const certificatesQuery = usePublicCertificates();
 
   const profile = cvQuery.data?.profile ?? null;
-  const projects = projectsQuery.data ?? [];
-  const homepageProjects = projects.slice(0, 3);
+  const homepageProjects = projectsQuery.data ?? [];
   const technologyGroups = technologyGroupsQuery.data ?? [];
   const experiences = experiencesQuery.data ?? [];
   const certificates = certificatesQuery.data ?? [];
@@ -844,31 +888,94 @@ export function HomePage() {
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2">
                   {contactItems.map((item) => {
+                    const isEmail = item.label === 'Email';
                     const actionLabel =
-                      item.label === 'Email'
+                      isEmail
                         ? 'Mail gönder'
                         : item.label === 'CV'
                           ? 'CV dosyasını aç'
                           : 'Profili aç';
 
+                    const icon =
+                      item.label === 'Email' ? (
+                        <Mail size={18} strokeWidth={1.8} />
+                      ) : item.label === 'GitHub' ? (
+                        <GithubIcon />
+                      ) : item.label === 'LinkedIn' ? (
+                        <LinkedinIcon />
+                      ) : (
+                        <FileText size={18} strokeWidth={1.8} />
+                      );
+
+                    if (isEmail) {
+                      return (
+                        <article
+                          key={item.label}
+                          className="group flex min-h-[170px] flex-col items-center justify-center rounded-xl border border-[#D1D7E0] bg-[#F7F8FA] p-5 text-center shadow-sm shadow-black/5 transition hover:-translate-y-1 hover:border-[#14171C]/25 hover:bg-white"
+                        >
+                          <span className="inline-flex h-12 w-12 items-center justify-center rounded-lg border border-[#D1D7E0] bg-white text-[#14171C] shadow-sm shadow-black/5">
+                            {icon}
+                          </span>
+
+                          <p className="font-['IBM_Plex_Mono'] mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#64748B]">
+                            {item.label}
+                          </p>
+
+                          <p
+                            className="mt-2 max-w-full truncate font-['IBM_Plex_Mono'] text-xs font-medium text-[#475569]"
+                            title={item.value}
+                          >
+                            {item.value}
+                          </p>
+
+                          <div className="mt-4 flex items-center justify-center gap-2">
+                            <a
+                              href={item.href}
+                              className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-[#D1D7E0] bg-white px-3 font-['IBM_Plex_Mono'] text-xs font-semibold text-[#14171C] transition hover:border-[#2563EB] hover:text-[#2563EB]"
+                            >
+                              <span>{actionLabel}</span>
+                              <ArrowRight size={14} strokeWidth={1.9} />
+                            </a>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                void handleCopyEmail(item.value);
+                              }}
+                              aria-label="E-posta adresini kopyala"
+                              title={copiedEmail ? 'Kopyalandı' : 'E-posta adresini kopyala'}
+                              className={[
+                                'inline-flex h-9 w-9 items-center justify-center rounded-lg border bg-white transition',
+                                copiedEmail
+                                  ? 'border-[#16A34A]/40 text-[#16A34A]'
+                                  : 'border-[#D1D7E0] text-[#475569] hover:border-[#2563EB] hover:text-[#2563EB]',
+                              ].join(' ')}
+                            >
+                              {copiedEmail ? (
+                                <Check size={15} strokeWidth={2.2} />
+                              ) : (
+                                <Copy size={15} strokeWidth={2} />
+                              )}
+                            </button>
+                          </div>
+
+                          <span className="sr-only" aria-live="polite">
+                            {copiedEmail ? 'E-posta adresi kopyalandı.' : ''}
+                          </span>
+                        </article>
+                      );
+                    }
+
                     return (
                       <a
                         key={item.label}
                         href={item.href}
-                        target={item.href.startsWith('mailto:') ? undefined : '_blank'}
-                        rel={item.href.startsWith('mailto:') ? undefined : 'noreferrer'}
+                        target="_blank"
+                        rel="noreferrer"
                         className="group flex min-h-[170px] flex-col items-center justify-center rounded-xl border border-[#D1D7E0] bg-[#F7F8FA] p-5 text-center shadow-sm shadow-black/5 transition hover:-translate-y-1 hover:border-[#14171C]/25 hover:bg-white"
                       >
                         <span className="inline-flex h-12 w-12 items-center justify-center rounded-lg border border-[#D1D7E0] bg-white text-[#14171C] shadow-sm shadow-black/5">
-                          {item.label === 'Email' ? (
-                            <Mail size={18} strokeWidth={1.8} />
-                          ) : item.label === 'GitHub' ? (
-                            <GithubIcon />
-                          ) : item.label === 'LinkedIn' ? (
-                            <LinkedinIcon />
-                          ) : (
-                            <FileText size={18} strokeWidth={1.8} />
-                          )}
+                          {icon}
                         </span>
 
                         <p className="font-['IBM_Plex_Mono'] mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#64748B]">
