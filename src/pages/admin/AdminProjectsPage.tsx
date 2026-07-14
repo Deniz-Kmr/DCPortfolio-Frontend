@@ -1,8 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
+import { routePaths } from '../../app/router/routePaths';
 import {
   AdminButton,
   AdminPanel,
@@ -143,6 +145,7 @@ function getNextProjectDisplayOrder(items: AdminProjectListItem[]) {
 }
 
 export function AdminProjectsPage() {
+  const navigate = useNavigate();
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -278,6 +281,12 @@ export function AdminProjectsPage() {
           <AdminToolbar>
             <AdminStatusBadge tone="online">protected</AdminStatusBadge>
             <AdminStatusBadge tone="neutral">{sortedProjects.length} records</AdminStatusBadge>
+            <AdminButton
+              variant="neutral"
+              onClick={() => navigate(routePaths.admin.homeProjects)}
+            >
+              Ana Sayfa Projeleri
+            </AdminButton>
             <AdminButton variant="primary" onClick={openCreateForm}>
               Yeni Proje
             </AdminButton>

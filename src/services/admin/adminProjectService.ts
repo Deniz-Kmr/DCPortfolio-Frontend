@@ -6,6 +6,7 @@ import type {
   AdminProjectDetail,
   AdminProjectListItem,
   AdminProjectUpdateRequest,
+  UpdateHomeProjectSelectionRequest,
 } from '../../types/admin';
 
 export async function getAdminProjects() {
@@ -36,6 +37,17 @@ export async function createAdminProject(request: AdminProjectCreateRequest) {
 export async function updateAdminProject(id: number, request: AdminProjectUpdateRequest) {
   const response = await apiClient.put<ApiResponse<AdminProjectDetail>>(
     apiRoutes.admin.projectById(id),
+    request,
+  );
+
+  return response.data;
+}
+
+export async function updateHomeProjectSelection(
+  request: UpdateHomeProjectSelectionRequest,
+) {
+  const response = await apiClient.put<ApiResponse<AdminProjectListItem[]>>(
+    apiRoutes.admin.homeProjectSelection,
     request,
   );
 
