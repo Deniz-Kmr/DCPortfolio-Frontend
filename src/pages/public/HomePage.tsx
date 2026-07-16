@@ -155,7 +155,7 @@ function RouteHeader({
       <div className="flex items-center gap-2.5">
         <MethodBadge method={method} />
         <span className={`${FONT_MONO} text-sm text-[#14171C]`}>{path}</span>
-        <span className="h-px flex-1 bg-[#94A3B8]/80" />
+        <span className="h-px min-w-2 flex-1 bg-[#94A3B8]/80" />
         <span className={`${FONT_MONO} text-[11px] text-[#64748B]`}>200 OK</span>
       </div>
       <h2 className={` mt-4 text-xl font-extrabold uppercase tracking-[0.12em] text-[#14171C] sm:text-2xl`}>
@@ -272,10 +272,11 @@ export function HomePage() {
       variants={pageFade}
       className={` bg-[#EEF1F5]`}
     >
-      <motion.section initial="hidden" whileInView="visible" viewport={motionViewport} variants={sectionFade} id="hero" className="mx-auto max-w-6xl px-5 pb-16 pt-20 sm:px-6 sm:pb-24 sm:pt-24">
-        <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
+      <motion.section initial="hidden" whileInView="visible" viewport={motionViewport} variants={sectionFade} id="hero" className="mx-auto max-w-6xl px-5 pb-10 pt-14 sm:px-6 sm:pb-20 sm:pt-20 lg:pb-24 lg:pt-24">
+        <div className="relative grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#E3E6EA] bg-white px-3 py-1">
+            <div className="min-h-[205px] pr-[165px] min-[390px]:min-h-[215px] min-[390px]:pr-[180px] sm:min-h-[245px] sm:pr-[205px] lg:min-h-0 lg:pr-0">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#E3E6EA] bg-white px-3 py-1">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#16A34A] opacity-60" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[#16A34A]" />
@@ -285,7 +286,7 @@ export function HomePage() {
               </span>
             </div>
 
-            <h1 className={`${FONT_DISPLAY} mt-6 text-5xl font-extrabold tracking-tight text-[#14171C] sm:text-6xl`}>
+            <h1 className={`${FONT_DISPLAY} mt-6 whitespace-nowrap text-4xl font-extrabold tracking-tight text-[#14171C] min-[480px]:text-5xl sm:text-6xl`}>
               {displayName}
             </h1>
 
@@ -299,12 +300,13 @@ export function HomePage() {
                 </span>
               ))}
             </div>
+            </div>
 
             <p className="mt-7 max-w-lg text-base leading-8 text-[#4B5563] sm:text-lg">
               {displaySummary}
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+            <div className="mt-7 flex flex-wrap items-center gap-3 sm:mt-9">
               {profile?.githubUrl ? (
                   <a
                   href={profile.githubUrl}
@@ -347,20 +349,20 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[300px] lg:ml-auto">
+          <div className="absolute right-2 top-0 z-10 w-[156px] min-[390px]:right-3 min-[390px]:w-[172px] sm:right-4 sm:w-[190px] lg:static lg:ml-auto lg:w-full lg:max-w-[300px]">
             <div className="absolute -inset-4 rounded-[2rem] bg-[#2563EB]/10 blur-2xl" />
 
-            <div className="relative rounded-2xl border border-[#D1D7E0] bg-white p-3 shadow-xl shadow-black/10">
-              <div className="mb-2 flex items-center gap-2 px-1 py-0.5">
+            <div className="relative rounded-2xl border border-[#D1D7E0] bg-white p-2 shadow-xl shadow-black/10 sm:p-2.5 lg:p-3">
+              <div className="mb-2 flex min-w-0 items-center gap-1 px-0.5 py-0.5 sm:gap-2 sm:px-1">
                 <MethodBadge method="GET" />
 
-                <span className={`${FONT_MONO} text-xs text-[#4B5563]`}>
+                <span className={`${FONT_MONO} min-w-0 truncate text-[9px] text-[#4B5563] min-[390px]:text-[10px] sm:text-xs`}>
                   /profile
                 </span>
 
                 <span className="h-px flex-1 bg-[#94A3B8]/80" />
 
-                <span className={`${FONT_MONO} text-[11px] font-medium text-[#475569]`}>
+                <span className={`${FONT_MONO} shrink-0 whitespace-nowrap text-[8px] font-medium text-[#475569] min-[390px]:text-[9px] sm:text-[10px] lg:text-[11px]`}>
                   200 OK
                 </span>
               </div>
@@ -368,8 +370,9 @@ export function HomePage() {
               <img
                 src={resolveAssetUrl("/images/profile/deniz-celik.jpg") ?? undefined}
                 alt="Deniz Çelik"
-                className="aspect-[4/5] w-full rounded-xl object-cover"
-                loading="lazy"
+                className="aspect-[4/5] w-full rounded-xl object-cover object-center"
+                loading="eager"
+                fetchPriority="high"
               />
             </div>
           </div>
