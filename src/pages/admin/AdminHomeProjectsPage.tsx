@@ -15,7 +15,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   AdminButton,
@@ -137,10 +137,22 @@ export function AdminHomeProjectsPage() {
   const projectsQuery = useAdminProjects();
   const updateSelection = useUpdateHomeProjectSelection();
 
-  const [selectedProjectIds, setSelectedProjectIds] = useState<number[]>([]);
-  const [savedProjectIds, setSavedProjectIds] = useState<number[]>([]);
+  const initialProjectIds = useMemo(
+    () => getSavedHomeProjectIds(projectsQuery.data ?? []),
+    [projectsQuery.data],
+  );
+
+  const [selectedProjectIdsState, setSelectedProjectIds] = useState<
+    number[] | null
+  >(null);
+  const [savedProjectIdsState, setSavedProjectIds] = useState<number[] | null>(
+    null,
+  );
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
-  const [hasInitialized, setHasInitialized] = useState(false);
+
+  const selectedProjectIds =
+    selectedProjectIdsState ?? initialProjectIds;
+  const savedProjectIds = savedProjectIdsState ?? initialProjectIds;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -152,18 +164,6 @@ export function AdminHomeProjectsPage() {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-
-  useEffect(() => {
-    if (!projectsQuery.data || hasInitialized) {
-      return;
-    }
-
-    const homeProjectIds = getSavedHomeProjectIds(projectsQuery.data);
-
-    setSelectedProjectIds(homeProjectIds);
-    setSavedProjectIds(homeProjectIds);
-    setHasInitialized(true);
-  }, [hasInitialized, projectsQuery.data]);
 
   const projectsById = useMemo(() => {
     return new Map(
@@ -209,13 +209,16 @@ export function AdminHomeProjectsPage() {
       return;
     }
 
-    setSelectedProjectIds((currentIds) => [...currentIds, project.id]);
+    setSelectedProjectIds((currentIds) => [
+      ...(currentIds ?? selectedProjectIds),
+      project.id,
+    ]);
   }
 
   function removeProject(projectId: number) {
     setFeedbackMessage(null);
     setSelectedProjectIds((currentIds) =>
-      currentIds.filter((id) => id !== projectId),
+      (currentIds ?? selectedProjectIds).filter((id) => id !== projectId),
     );
   }
 
@@ -227,14 +230,15 @@ export function AdminHomeProjectsPage() {
     }
 
     setSelectedProjectIds((currentIds) => {
-      const oldIndex = currentIds.indexOf(Number(active.id));
-      const newIndex = currentIds.indexOf(Number(over.id));
+      const resolvedIds = currentIds ?? selectedProjectIds;
+      const oldIndex = resolvedIds.indexOf(Number(active.id));
+      const newIndex = resolvedIds.indexOf(Number(over.id));
 
       if (oldIndex === -1 || newIndex === -1) {
-        return currentIds;
+        return resolvedIds;
       }
 
-      return arrayMove(currentIds, oldIndex, newIndex);
+      return arrayMove(resolvedIds, oldIndex, newIndex);
     });
 
     setFeedbackMessage(null);
