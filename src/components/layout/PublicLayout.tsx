@@ -8,12 +8,12 @@ const desktopNavItems = [
   { label: 'Projeler', href: '/projects' },
   { label: 'Tech Stack', href: '/#technologies' },
   { label: 'Deneyimler', href: '/#experience' },
+  { label: 'Sertifikalar', href: '/#certificates' },
 ];
 
 const mobileNavItems = [
   { label: 'Ana sayfa', href: '/#hero' },
   ...desktopNavItems,
-  { label: 'Sertifikalar', href: '/#certificates' },
   { label: 'İletişim', href: '/#contact' },
 ];
 
@@ -87,7 +87,7 @@ export function PublicLayout() {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#EEF1F5] font-['Inter'] text-[#14171C]">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-[#EEF1F5] font-['Inter'] text-[#14171C]">
       <header className="sticky top-0 z-40 border-b border-[#DDE2EA]/80 bg-[#EEF1F5]/85 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-6 sm:py-4">
           <a
@@ -267,9 +267,56 @@ export function PublicLayout() {
         ) : null}
       </AnimatePresence>
 
-      <main>
+      <main className="flex-1">
         <Outlet />
       </main>
+
+      <footer className="mt-10 border-t border-[#D1D7E0] bg-[#F7F8FA]">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-7 sm:px-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium text-[#475569]">
+              © {new Date().getFullYear()} Deniz Çelik. Tüm hakları saklıdır.
+            </p>
+
+            <p className="mt-1 font-['IBM_Plex_Mono'] text-[9px] uppercase tracking-[0.14em] text-[#94A3B8]">
+              Backend · Mobile · AI Integration
+            </p>
+          </div>
+
+          <nav
+            className="flex flex-wrap items-center gap-x-4 gap-y-2"
+            aria-label="Footer navigasyonu"
+          >
+            <a
+              href="/#about"
+              className="font-['IBM_Plex_Mono'] text-[10px] text-[#64748B] transition hover:text-[#14171C]"
+            >
+              Hakkımda
+            </a>
+
+            <a
+              href="/projects"
+              className="font-['IBM_Plex_Mono'] text-[10px] text-[#64748B] transition hover:text-[#14171C]"
+            >
+              Projeler
+            </a>
+
+            <a
+              href="/#certificates"
+              className="font-['IBM_Plex_Mono'] text-[10px] text-[#64748B] transition hover:text-[#14171C]"
+            >
+              Sertifikalar
+            </a>
+
+            <a
+              href="/#contact"
+              className="font-['IBM_Plex_Mono'] text-[10px] text-[#64748B] transition hover:text-[#14171C]"
+            >
+              İletişim
+            </a>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }
