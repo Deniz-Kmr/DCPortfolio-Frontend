@@ -130,7 +130,7 @@ function getSavedHomeProjectIds(projects: AdminProjectListItem[]) {
       return first.title.localeCompare(second.title, 'tr');
     })
     .map((project) => project.id)
-    .slice(0, 3);
+    .slice(0, 6);
 }
 
 export function AdminHomeProjectsPage() {
@@ -194,7 +194,7 @@ export function AdminHomeProjectsPage() {
   }, [projectsQuery.data, selectedProjectIds]);
 
   const isDirty = !arraysEqual(selectedProjectIds, savedProjectIds);
-  const isSelectionFull = selectedProjectIds.length >= 3;
+  const isSelectionFull = selectedProjectIds.length >= 6;
 
   function addProject(project: AdminProjectListItem) {
     setFeedbackMessage(null);
@@ -205,7 +205,7 @@ export function AdminHomeProjectsPage() {
     }
 
     if (isSelectionFull) {
-      setFeedbackMessage('Ana sayfada en fazla 3 proje gösterilebilir.');
+      setFeedbackMessage('Ana sayfada en fazla 6 proje gösterilebilir.');
       return;
     }
 
@@ -306,7 +306,7 @@ export function AdminHomeProjectsPage() {
           <AdminToolbar>
             <AdminStatusBadge tone="online">protected</AdminStatusBadge>
             <AdminStatusBadge tone={isSelectionFull ? 'warning' : 'neutral'}>
-              {selectedProjectIds.length}/3 selected
+              {selectedProjectIds.length}/6 selected
             </AdminStatusBadge>
             {isDirty ? (
               <AdminStatusBadge tone="warning">
@@ -324,7 +324,7 @@ export function AdminHomeProjectsPage() {
               Ana Sayfa Projeleri
             </h1>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-[#64748B]">
-              Ana sayfada gösterilecek en fazla üç projeyi seç. Seçilen
+              Ana sayfada gösterilecek en fazla altı projeyi seç. Seçilen
               projeleri sürükleyerek görüntülenme sırasını değiştir.
             </p>
           </div>
@@ -379,7 +379,7 @@ export function AdminHomeProjectsPage() {
           </div>
 
           <AdminStatusBadge tone={isSelectionFull ? 'warning' : 'neutral'}>
-            {selectedProjectIds.length}/3
+            {selectedProjectIds.length}/6
           </AdminStatusBadge>
         </div>
 
